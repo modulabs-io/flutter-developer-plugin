@@ -1,0 +1,79 @@
+# Flutter Developer Plugin - Cursor Rules
+
+## Repository
+
+This is `modulabs-io/flutter-developer-plugin`, a Claude Code plugin for Flutter development.
+
+## Structure
+
+```
+agents/          # 21 specialized Flutter agents
+skills/          # 33 slash command skills
+commands/        # 3 feature scaffolding commands
+hooks/           # Automated hooks configuration
+.claude-plugin/  # Plugin manifest
+```
+
+## Agent Format
+
+File: `agents/flutter-{domain}.md`
+
+```markdown
+---
+name: flutter-{domain}
+description: Brief description
+allowed-tools: [Bash, Read, Write, Edit, Glob, Grep]
+---
+
+# Agent Title
+
+## Core Responsibilities
+## Patterns and Examples
+## Decision Guidelines
+```
+
+## Skill Format
+
+File: `skills/flutter-{action}/SKILL.md`
+
+```markdown
+# /flutter-{action}
+
+## Usage
+## Options
+## Examples
+## Instructions
+## Agent Reference
+```
+
+## Naming
+
+- Agents: `flutter-{domain}.md` (kebab-case)
+- Skills: `flutter-{action}/SKILL.md`
+- Commands: `flutter-{command}.md`
+
+## Commits (Conventional)
+
+```
+type(scope): description
+```
+
+Types: feat, fix, docs, refactor, chore
+Scopes: agents, skills, commands, hooks, mcp, plugin
+
+Examples:
+- `feat(agents): add flutter-web-platform agent`
+- `fix(skills): correct flutter-build steps`
+
+## Code Style
+
+- Use code blocks with language specifiers
+- Provide practical examples
+- Follow Flutter best practices
+
+## Workflow
+
+- Trunk-based development
+- Direct commits to main or short-lived branches
+- Pull latest before work
+- Small, focused changes

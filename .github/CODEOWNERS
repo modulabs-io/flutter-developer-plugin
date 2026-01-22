@@ -1,0 +1,63 @@
+# CODEOWNERS for flutter-developer-plugin
+# These owners will be requested for review when changes are made to their areas
+
+# Default owners for everything
+* @modulabs-io/flutter-plugin-maintainers
+
+# Plugin manifest and configuration
+/.claude-plugin/ @modulabs-io/flutter-plugin-maintainers
+/.mcp.json @modulabs-io/flutter-plugin-maintainers
+
+# Agents - core Flutter functionality
+/agents/flutter-architect.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-state-manager.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-widget-builder.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-test-engineer.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-performance-analyst.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-codegen-assistant.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-ffi-native.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-i18n-expert.md @modulabs-io/flutter-plugin-maintainers
+
+# Agents - Firebase
+/agents/flutter-firebase-*.md @modulabs-io/flutter-plugin-maintainers
+
+# Agents - Supabase
+/agents/flutter-supabase-*.md @modulabs-io/flutter-plugin-maintainers
+
+# Agents - Platform specific
+/agents/flutter-ios-platform.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-android-platform.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-macos-platform.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-windows-platform.md @modulabs-io/flutter-plugin-maintainers
+/agents/flutter-linux-platform.md @modulabs-io/flutter-plugin-maintainers
+
+# Skills
+/skills/ @modulabs-io/flutter-plugin-maintainers
+
+# Commands
+/commands/ @modulabs-io/flutter-plugin-maintainers
+
+# Hooks
+/hooks/ @modulabs-io/flutter-plugin-maintainers
+
+# Documentation
+/README.md @modulabs-io/flutter-plugin-maintainers
+/CONTRIBUTING.md @modulabs-io/flutter-plugin-maintainers
+/CHANGELOG.md @modulabs-io/flutter-plugin-maintainers
+/CODE_OF_CONDUCT.md @modulabs-io/flutter-plugin-maintainers
+
+# AI Assistant rule files
+/CLAUDE.md @modulabs-io/flutter-plugin-maintainers
+/GEMINI.md @modulabs-io/flutter-plugin-maintainers
+/AGENTS.md @modulabs-io/flutter-plugin-maintainers
+/.cursorrules @modulabs-io/flutter-plugin-maintainers
+/.cursor/ @modulabs-io/flutter-plugin-maintainers
+/.gemini/ @modulabs-io/flutter-plugin-maintainers
+
+# GitHub configuration
+/.github/ @modulabs-io/flutter-plugin-maintainers
+
+# Build and release configuration
+/commitlint.config.js @modulabs-io/flutter-plugin-maintainers
+/release-please-config.json @modulabs-io/flutter-plugin-maintainers
+/.release-please-manifest.json @modulabs-io/flutter-plugin-maintainers

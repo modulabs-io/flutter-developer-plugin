@@ -1,0 +1,104 @@
+---
+description: Rules for developing the flutter-developer-plugin for Claude Code
+globs:
+  - "agents/**/*.md"
+  - "skills/**/*.md"
+  - "commands/**/*.md"
+  - "hooks/**/*.json"
+  - ".claude-plugin/**/*.json"
+  - ".mcp.json"
+---
+
+# Flutter Developer Plugin Development Rules
+
+## Repository Context
+
+This is `modulabs-io/flutter-developer-plugin`, a Claude Code plugin for Flutter development.
+
+**Structure:**
+- `agents/` - 21 specialized Flutter agents (YAML frontmatter + Markdown)
+- `skills/` - 33 slash command skills (SKILL.md in subdirectories)
+- `commands/` - 3 feature scaffolding commands
+- `hooks/` - Automated hooks configuration
+- `.claude-plugin/` - Plugin manifest
+
+## File Patterns
+
+### Agent Files (`agents/flutter-*.md`)
+
+```markdown
+---
+name: flutter-{domain}
+description: Brief description
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+---
+
+# Agent Title
+
+## Core Responsibilities
+## Patterns and Examples
+## Decision Guidelines
+```
+
+### Skill Files (`skills/flutter-*/SKILL.md`)
+
+```markdown
+# /flutter-{action}
+
+## Usage
+## Arguments
+## Options
+## Examples
+## Instructions
+## Agent Reference
+```
+
+## Naming Conventions
+
+- Agents: `flutter-{domain}.md` (kebab-case)
+- Skills: `flutter-{action}/SKILL.md`
+- Commands: `flutter-{command}.md`
+
+## Code Style
+
+- Use code blocks with language specifiers (```dart, ```yaml, ```bash)
+- Provide practical, copy-pasteable examples
+- Follow Flutter/Dart best practices
+- Include error handling patterns
+
+## Conventional Commits
+
+```
+type(scope): description
+```
+
+**Types:** feat, fix, docs, refactor, chore
+**Scopes:** agents, skills, commands, hooks, mcp, plugin
+
+**Examples:**
+```
+feat(agents): add flutter-web-platform agent
+fix(skills): correct flutter-build signing steps
+docs: update README
+```
+
+## Development Workflow
+
+- Trunk-based development on `main`
+- Short-lived feature branches (< 1 day)
+- Pull latest before starting work
+- Keep changes small and focused
+
+## Verification
+
+Before committing:
+1. Validate YAML frontmatter syntax
+2. Check code block language specifiers
+3. Verify agent/skill references exist
+4. Update plugin.json counts if adding files
