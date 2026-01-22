@@ -191,9 +191,142 @@ flutter build windows --debug
 flutter build windows --release --dart-define=ENV=production
 ```
 
+## WinApp CLI (Recommended)
+
+Microsoft's WinApp CLI provides a unified command-line experience for Windows app development. Released in January 2026, it simplifies certificate management, MSIX packaging, and code signing.
+
+### Installation
+
+```powershell
+# Install via winget (recommended)
+winget install Microsoft.winappcli --source winget
+
+# Verify installation
+winapp --version
+
+# Initialize workspace (configures SDKs and tools)
+winapp init
+
+# Restore environment if needed
+winapp restore
+```
+
+### Certificate Management
+
+WinApp CLI simplifies certificate creation (replaces complex PowerShell scripts):
+
+```powershell
+# Generate self-signed development certificate (one command!)
+winapp cert generate
+
+# List certificates
+winapp cert list
+
+# The certificate is automatically configured for MSIX signing
+```
+
+Compare with traditional PowerShell (12+ lines vs 1 line):
+```powershell
+# Old way (still works, but more complex):
+$cert = New-SelfSignedCertificate -Type Custom -Subject "CN=..." ...
+Export-PfxCertificate -Cert $cert -FilePath "cert.pfx" ...
+```
+
+### Debug Identity (New Capability)
+
+Test package-identity-dependent features without creating a full MSIX install:
+
+```powershell
+# Add package identity to your debug executable
+winapp create-debug-identity "build\windows\x64\runner\Release\myapp.exe"
+
+# This enables testing of:
+# - App identity APIs
+# - Package-aware features
+# - Windows notification identity
+# - Background tasks requiring identity
+```
+
+### Asset Generation
+
+Automatically generate all required icon sizes from a single source:
+
+```powershell
+# Generate all Windows icon sizes from source PNG
+winapp manifest update-assets assets/app_icon.png
+
+# Creates icons for:
+# - Taskbar (16x16, 24x24, 32x32, 48x48)
+# - Start menu tiles (71x71, 150x150, 310x310)
+# - Store listing (50x50, 300x300)
+# - Splash screen (620x300)
+```
+
+### MSIX Packaging with WinApp CLI
+
+```powershell
+# Build Flutter app first
+flutter build windows --release
+
+# Package as MSIX with auto-signing
+winapp pack "build\windows\x64\runner\Release" --cert auto
+
+# Package with specific certificate
+winapp pack "build\windows\x64\runner\Release" --cert certificate.pfx --password YourPassword
+
+# Package without signing (for testing)
+winapp pack "build\windows\x64\runner\Release" --no-sign
+```
+
+### Code Signing with WinApp CLI
+
+```powershell
+# Sign executable
+winapp sign "build\windows\x64\runner\Release\myapp.exe"
+
+# Sign MSIX package
+winapp sign "MyApp.msix"
+
+# Sign with specific certificate
+winapp sign "myapp.exe" --cert certificate.pfx --password YourPassword
+
+# Sign with timestamp (recommended for production)
+winapp sign "myapp.exe" --timestamp http://timestamp.digicert.com
+```
+
+### WinApp CLI Quick Reference
+
+| Task | Command |
+|------|---------|
+| Install CLI | `winget install Microsoft.winappcli` |
+| Initialize workspace | `winapp init` |
+| Generate dev certificate | `winapp cert generate` |
+| Generate icon assets | `winapp manifest update-assets icon.png` |
+| Add debug identity | `winapp create-debug-identity app.exe` |
+| Package as MSIX | `winapp pack <dir> --cert auto` |
+| Sign executable | `winapp sign app.exe` |
+| Restore environment | `winapp restore` |
+
+---
+
 ## MSIX Packaging
 
-### Install msix Package
+### Method 1: WinApp CLI (Recommended)
+
+See [WinApp CLI](#winapp-cli-recommended) section above for the modern approach.
+
+```powershell
+# Quick MSIX creation with WinApp CLI
+flutter build windows --release
+winapp cert generate  # First time only
+winapp pack "build\windows\x64\runner\Release" --cert auto
+```
+
+### Method 2: msix Dart Package (Alternative)
+
+Use the `msix` Dart package when WinApp CLI is not available (e.g., cross-platform development) or for programmatic configuration.
+
+#### Install msix Package
 
 ```yaml
 # pubspec.yaml
@@ -254,7 +387,32 @@ signtool sign /fd SHA256 /a /f certificate.pfx /p password "MyApp.msix"
 
 ## Code Signing
 
-### Create Self-Signed Certificate (Testing)
+### Method 1: WinApp CLI (Recommended)
+
+WinApp CLI streamlines the entire code signing process:
+
+```powershell
+# Generate development certificate (one command!)
+winapp cert generate
+
+# Sign executable
+winapp sign "build\windows\x64\runner\Release\myapp.exe"
+
+# Sign MSIX
+winapp sign "MyApp.msix"
+
+# Sign with timestamp (recommended for production)
+winapp sign "myapp.exe" --timestamp http://timestamp.digicert.com
+
+# View certificates
+winapp cert list
+```
+
+### Method 2: PowerShell/signtool (Alternative)
+
+Use this method when WinApp CLI is not available.
+
+#### Create Self-Signed Certificate (Testing)
 
 ```powershell
 # Create self-signed certificate
@@ -274,7 +432,7 @@ Export-PfxCertificate -Cert $cert -FilePath "certificate.pfx" -Password $passwor
 Export-Certificate -Cert $cert -FilePath "certificate.cer"
 ```
 
-### Sign Executable
+#### Sign Executable with signtool
 
 ```powershell
 # Sign EXE
@@ -483,10 +641,128 @@ class UpdateChecker {
 
 ## CI/CD Integration
 
-### GitHub Actions
+### Method 1: GitHub Actions with WinApp CLI (Recommended)
 
 ```yaml
 name: Windows Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup WinApp CLI
+        uses: microsoft/setup-WinAppCli@v1
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Windows
+        run: flutter build windows --release
+
+      - name: Generate certificate
+        run: winapp cert generate
+
+      - name: Generate icon assets
+        run: |
+          if (Test-Path "assets/app_icon.png") {
+            winapp manifest update-assets assets/app_icon.png
+          }
+
+      - name: Package as MSIX
+        run: winapp pack "build\windows\x64\runner\Release" --cert auto
+
+      - name: Upload MSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-msix
+          path: "*.msix"
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: build/windows/x64/runner/Release/
+```
+
+### Cross-Platform Teams (macOS/Linux Developers)
+
+For teams where developers use macOS or Linux, Windows packaging must happen via CI/CD since WinApp CLI is Windows-only:
+
+```yaml
+# .github/workflows/windows-package.yml
+# For macOS/Linux developers who need Windows MSIX packages
+
+name: Windows Package
+
+on:
+  workflow_dispatch:  # Manual trigger from any platform
+    inputs:
+      sign:
+        description: 'Sign the package'
+        required: false
+        default: 'true'
+        type: boolean
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  package:
+    runs-on: windows-latest  # Windows runner required for WinApp CLI
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup WinApp CLI
+        uses: microsoft/setup-WinAppCli@v1
+
+      - uses: subosito/flutter-action@v2
+
+      - run: flutter pub get
+      - run: flutter build windows --release
+
+      - name: Generate certificate and package
+        run: |
+          winapp cert generate
+          winapp pack "build\windows\x64\runner\Release" --cert auto
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-msix
+          path: "*.msix"
+```
+
+**Trigger from macOS/Linux:**
+```bash
+# Using GitHub CLI
+gh workflow run windows-package.yml
+
+# Check status
+gh run list --workflow=windows-package.yml
+
+# Download artifact
+gh run download <run-id> -n windows-msix
+```
+
+### Method 2: GitHub Actions with msix Package (Alternative)
+
+Use this if you prefer the Dart-based approach or need to avoid WinApp CLI:
+
+```yaml
+name: Windows Build (Legacy)
 
 on:
   push:
@@ -528,6 +804,50 @@ jobs:
 
 ## Troubleshooting
 
+### WinApp CLI Issues
+
+```powershell
+# WinApp CLI not found after installation
+# Refresh PATH environment variable:
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+# Or restart your terminal/IDE
+
+# winget not available
+# Install App Installer from Microsoft Store
+# Or download from: https://github.com/microsoft/winget-cli/releases
+
+# WinApp CLI initialization fails
+winapp init --verbose
+winapp restore
+
+# Certificate generation fails
+# Run as administrator or check permissions:
+winapp cert generate --verbose
+
+# SDK not found by WinApp CLI
+# Install Windows SDK via Visual Studio Installer, then:
+winapp restore
+```
+
+### Platform-Specific Notes
+
+**macOS/Linux developers:**
+```bash
+# WinApp CLI is Windows-only
+# Use CI/CD for Windows packaging:
+/flutter-winapp-setup --ci
+
+# Local alternative (unsigned MSIX):
+dart pub add --dev msix
+dart run msix:create
+
+# Trigger CI workflow from macOS/Linux:
+gh workflow run windows-package.yml
+```
+
+### General Build Issues
+
 ```powershell
 # Build errors - clean rebuild
 flutter clean
@@ -549,7 +869,7 @@ Get-AppxPackage | Where-Object {$_.Name -like "*myapp*"}
 # Uninstall MSIX
 Get-AppxPackage *myapp* | Remove-AppxPackage
 
-# Check signing
+# Check signing (traditional method)
 signtool verify /pa /v myapp.exe
 
 # Debug CMake

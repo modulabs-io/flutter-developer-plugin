@@ -68,7 +68,7 @@
   },
   "skills": {
     "directory": "../skills",
-    "count": 33,
+    "count": 34,
     "categories": {
       "core": [
         "flutter-create",
@@ -112,6 +112,7 @@
         "flutter-android-adb",
         "flutter-macos-package",
         "flutter-windows-package",
+        "flutter-winapp-setup",
         "flutter-linux-package",
         "flutter-pub"
       ]
