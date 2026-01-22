@@ -1,6 +1,6 @@
 {
   "name": "flutter-developer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Comprehensive Flutter development plugin for Claude Code - supports desktop (Windows, macOS, Linux) and mobile (iOS, Android) development with Firebase, Supabase, and all major state management solutions",
   "author": "Flutter Developer Plugin Contributors",
   "license": "MIT",
@@ -133,23 +133,44 @@
   },
   "configuration": {
     "stateManagement": {
-      "supported": ["riverpod", "bloc", "provider"],
+      "supported": [
+        "riverpod",
+        "bloc",
+        "provider"
+      ],
       "default": "riverpod",
       "description": "Supported state management solutions"
     },
     "architecture": {
-      "supported": ["feature-first", "layer-first"],
+      "supported": [
+        "feature-first",
+        "layer-first"
+      ],
       "default": "feature-first",
       "description": "Project architecture pattern"
     },
     "backends": {
-      "supported": ["none", "firebase", "supabase"],
+      "supported": [
+        "none",
+        "firebase",
+        "supabase"
+      ],
       "default": "none",
       "description": "Backend integration options"
     },
     "platforms": {
-      "supported": ["ios", "android", "macos", "windows", "linux", "web"],
-      "default": ["ios", "android"],
+      "supported": [
+        "ios",
+        "android",
+        "macos",
+        "windows",
+        "linux",
+        "web"
+      ],
+      "default": [
+        "ios",
+        "android"
+      ],
       "description": "Target platforms"
     }
   }
