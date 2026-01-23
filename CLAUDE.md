@@ -388,6 +388,39 @@ This plugin supports three state management solutions:
 
 Agents and skills should provide examples for all supported solutions where applicable.
 
+## Flutter 3.38+ Features
+
+When creating or modifying content, leverage these modern Flutter features:
+
+### Edge-to-Edge Display (Android 15+)
+
+```dart
+// Enabled by default in Flutter 3.38+ for Android 15+
+// Handle system UI overlaps with SafeArea and MediaQuery.padding
+```
+
+### Impeller Rendering Engine
+
+- Default on iOS and Android
+- Improved performance and reduced shader compilation jank
+- Consider when writing performance-related guidance
+
+### Native Assets (FFI)
+
+```dart
+// pubspec.yaml
+flutter:
+  assets:
+    - native_assets/
+```
+
+### Web Assembly (Wasm) Support
+
+```bash
+# Build for WebAssembly
+flutter build web --wasm
+```
+
 ## Platform Support
 
 The plugin covers all Flutter platforms:
@@ -431,6 +464,6 @@ Each platform has dedicated agents and skills for platform-specific concerns (si
 - Always use code blocks with language specifiers (```dart, ```yaml, etc.)
 - Provide practical, copy-pasteable examples
 - Reference official Flutter documentation where appropriate
-- Keep content up-to-date with latest Flutter/Dart versions (3.20+/3.3+)
+- Keep content up-to-date with latest Flutter/Dart versions (3.38+/3.7+)
 - Consider accessibility in all UI-related guidance
 - Include error handling patterns in code examples

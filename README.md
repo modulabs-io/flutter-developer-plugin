@@ -6,12 +6,14 @@ A comprehensive Claude Code plugin that teaches Claude how to develop Flutter ap
 
 - **21 Specialized Agents** for Flutter development guidance
 - **33 Slash Commands** for common development tasks
-- **Multi-Platform Support**: iOS, Android, macOS, Windows, Linux
+- **Multi-Platform Support**: iOS, Android, macOS, Windows, Linux, Web (Wasm)
 - **State Management**: Riverpod, Bloc, and Provider
 - **Backend Integrations**: Firebase and Supabase
-- **Native/FFI Support**: C, Rust, and Java/Kotlin interop
+- **Native/FFI Support**: C, Rust, and Java/Kotlin interop with native assets
 - **Internationalization**: Complete i18n/l10n support
 - **Flutter AI Rules**: Integration with official Flutter AI guidelines
+- **Modern Rendering**: Impeller engine support (default on iOS/Android)
+- **Edge-to-Edge**: Android 15+ edge-to-edge display support
 
 ## Installation
 
@@ -282,8 +284,8 @@ Releases are automated via [Release Please](https://github.com/googleapis/releas
 
 ## Requirements
 
-- Flutter SDK 3.20+
-- Dart SDK 3.3+
+- Flutter SDK 3.38+
+- Dart SDK 3.7+
 - Claude Code 1.0+
 
 ## License
