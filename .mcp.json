@@ -42,7 +42,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "github/github-mcp-server"
+        "@modelcontextprotocol/server-github"
       ],
       "env": {
         "GITHUB_TOKEN": "${env:GITHUB_TOKEN}"
