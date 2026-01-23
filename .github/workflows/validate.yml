@@ -1,0 +1,65 @@
+name: Validate Plugin
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate plugin.json
+        run: |
+          echo "Validating plugin.json..."
+          node -e "JSON.parse(require('fs').readFileSync('.claude-plugin/plugin.json'))"
+          echo "plugin.json is valid JSON"
+
+      - name: Validate hooks.json
+        run: |
+          echo "Validating hooks.json..."
+          node -e "JSON.parse(require('fs').readFileSync('hooks/hooks.json'))"
+          echo "hooks.json is valid JSON"
+
+      - name: Validate .mcp.json
+        run: |
+          echo "Validating .mcp.json..."
+          node -e "JSON.parse(require('fs').readFileSync('.mcp.json'))"
+          echo ".mcp.json is valid JSON"
+
+      - name: Validate agent count
+        run: |
+          AGENT_COUNT=$(ls -1 agents/*.md 2>/dev/null | wc -l | tr -d ' ')
+          echo "Agent count: $AGENT_COUNT"
+          if [ "$AGENT_COUNT" -ne 21 ]; then
+            echo "ERROR: Expected 21 agents, found $AGENT_COUNT"
+            exit 1
+          fi
+
+      - name: Validate skill count
+        run: |
+          SKILL_COUNT=$(ls -1 skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')
+          echo "Skill count: $SKILL_COUNT"
+          if [ "$SKILL_COUNT" -ne 34 ]; then
+            echo "ERROR: Expected 34 skills, found $SKILL_COUNT"
+            exit 1
+          fi
+
+      - name: Validate YAML frontmatter
+        run: |
+          echo "Checking agent YAML frontmatter..."
+          for file in agents/*.md; do
+            if [ -f "$file" ]; then
+              if head -1 "$file" | grep -q "^---$"; then
+                echo "OK: $file"
+              fi
+            fi
+          done
