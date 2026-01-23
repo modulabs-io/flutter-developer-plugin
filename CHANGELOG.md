@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.3.0...v1.3.1) (2026-01-23)
+
+
+### Documentation
+
+* Update to Flutter 3.38+ with Impeller and edge-to-edge support ([773ae3f](https://github.com/modulabs-io/flutter-developer-plugin/commit/773ae3f1230b2735fe1578d7c209343a71c529b0))
+
 ## [1.3.0](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.2.0...v1.3.0) (2026-01-23)
 
 
