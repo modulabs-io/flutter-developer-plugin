@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.1.0...v1.2.0) (2026-01-23)
+
+
+### Features
+
+* **skills:** Integrate Microsoft WinApp CLI for Windows development ([6b5d79a](https://github.com/modulabs-io/flutter-developer-plugin/commit/6b5d79a31ab10a4393e69817020427dddaaebebe))
+
+
+### Bug Fixes
+
+* **mcp:** Correct GitHub MCP server package name ([485f4a1](https://github.com/modulabs-io/flutter-developer-plugin/commit/485f4a1d59e8b6a80144d5037fbca570f0adab61))
+
 ## [1.1.0](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.0.0...v1.1.0) (2026-01-22)
 
 
