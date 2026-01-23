@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.2.0...v1.3.0) (2026-01-23)
+
+
+### Features
+
+* **ci:** Add validate workflow with count assertions ([5672e5c](https://github.com/modulabs-io/flutter-developer-plugin/commit/5672e5c89d61b56191b2cfd803c71e8d5458f96b))
+
 ## [1.2.0](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.1.0...v1.2.0) (2026-01-23)
 
 
