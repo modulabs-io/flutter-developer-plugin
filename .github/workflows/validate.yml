@@ -80,8 +80,8 @@ jobs:
         run: |
           SKILL_COUNT=$(ls -1 skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')
           echo "Skill count: $SKILL_COUNT"
-          if [ "$SKILL_COUNT" -ne 34 ]; then
-            echo "ERROR: Expected 34 skills, found $SKILL_COUNT"
+          if [ "$SKILL_COUNT" -ne 43 ]; then
+            echo "ERROR: Expected 43 skills, found $SKILL_COUNT"
             exit 1
           fi
 
