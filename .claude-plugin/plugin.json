@@ -1,8 +1,10 @@
 {
   "name": "flutter-developer",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "Comprehensive Flutter development plugin for Claude Code - supports desktop (Windows, macOS, Linux) and mobile (iOS, Android) development with Firebase, Supabase, and all major state management solutions",
-  "author": { "name": "Flutter Developer Plugin Contributors" },
+  "author": {
+    "name": "Flutter Developer Plugin Contributors"
+  },
   "license": "MIT",
   "repository": "https://github.com/modulabs-io/flutter-developer-plugin",
   "keywords": [
@@ -24,11 +26,25 @@
   "capabilities": {
     "agents": {
       "count": 21,
-      "categories": ["core", "firebase", "supabase", "platform"]
+      "categories": [
+        "core",
+        "firebase",
+        "supabase",
+        "platform"
+      ]
     },
     "skills": {
       "count": 43,
-      "categories": ["project", "testing", "build", "firebase", "supabase", "platform", "ffi", "i18n"]
+      "categories": [
+        "project",
+        "testing",
+        "build",
+        "firebase",
+        "supabase",
+        "platform",
+        "ffi",
+        "i18n"
+      ]
     },
     "commands": {
       "count": 6,

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.3.1...v1.4.0) (2026-01-25)
+
+
+### Features
+
+* Add 9 new skills and 3 new commands ([a711844](https://github.com/modulabs-io/flutter-developer-plugin/commit/a7118443c5b0a8cc93eadabad7c5e19fc9855439))
+
+
+### Bug Fixes
+
+* **ci:** Update skill count assertion to 43 ([bfc156e](https://github.com/modulabs-io/flutter-developer-plugin/commit/bfc156e75df9766571a6126b86746d5f5f382789))
+
 ## [1.3.1](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.3.0...v1.3.1) (2026-01-23)
 
 
