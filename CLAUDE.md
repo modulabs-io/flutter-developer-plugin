@@ -36,7 +36,7 @@ flutter-developer-plugin/
 │   ├── flutter-firebase-*.md     # Firebase agents (4)
 │   ├── flutter-supabase-*.md     # Supabase agents (4)
 │   └── flutter-*-platform.md     # Platform agents (5)
-├── skills/                   # 33 slash command skills
+├── skills/                   # 43 slash command skills
 │   ├── flutter-create/
 │   ├── flutter-test/
 │   ├── flutter-build/
@@ -347,12 +347,25 @@ The plugin manifest at `.claude-plugin/plugin.json` defines:
 
 ### MCP Server Configuration
 
-The `.mcp.json` file configures Model Context Protocol servers for:
-- Dart/Flutter code analysis
-- File system operations
-- Git/GitHub integration
-- Backend services (Supabase, Firebase)
-- Platform tools (Xcode, Android)
+The `.mcp.json` file configures 13 Model Context Protocol servers:
+
+| Server | Package | Purpose |
+|--------|---------|---------|
+| `dart-flutter` | `dart mcp-server` | Dart/Flutter analysis |
+| `pubdev` | `@anthropic/pubdev-mcp-server` | pub.dev package search |
+| `flutter-community` | `flutter-mcp` | Community Flutter tools |
+| `filesystem` | `@modelcontextprotocol/server-filesystem` | File operations |
+| `git` | `@modelcontextprotocol/server-git` | Git operations |
+| `github` | `@modelcontextprotocol/server-github` | GitHub API |
+| `supabase` | `@supabase/mcp-server-supabase` | Supabase backend |
+| `postgres` | `@modelcontextprotocol/server-postgres` | PostgreSQL |
+| `sqlite` | `@modelcontextprotocol/server-sqlite` | SQLite |
+| `xcode-build` | `xcodebuildmcp` | Xcode project management |
+| `app-store-connect` | `@joshuarileydev/app-store-connect-mcp-server` | App Store Connect |
+| `android-replicant` | `@anthropic/replicant-mcp` | Android automation |
+| `chrome-devtools` | `chrome-devtools-mcp` | Chrome DevTools |
+
+Required environment variables: `GITHUB_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`, `DATABASE_URL`, `ANDROID_HOME`, `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_PRIVATE_KEY`
 
 ## Architecture Patterns
 

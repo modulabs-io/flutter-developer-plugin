@@ -2,64 +2,22 @@
   "hooks": {
     "PostToolUse": [
       {
-        "name": "dart-format-on-write",
-        "description": "Auto-format Dart files after Write or Edit operations",
-        "matcher": {
-          "tools": ["Write", "Edit"],
-          "filePatterns": ["**/*.dart"]
-        },
-        "command": "dart format {{file}}",
-        "enabled": true,
-        "continueOnError": true
+        "matcher": "Write|Edit",
+        "command": "dart format $CLAUDE_FILE_PATH"
       }
     ],
     "PreCommit": [
       {
-        "name": "flutter-analyze",
-        "description": "Run Flutter analyzer before committing",
-        "command": "flutter analyze --no-fatal-infos",
-        "enabled": true,
-        "continueOnError": false
+        "command": "flutter analyze --no-fatal-infos"
       },
       {
-        "name": "dart-format-check",
-        "description": "Check Dart formatting before committing",
-        "command": "dart format --set-exit-if-changed .",
-        "enabled": true,
-        "continueOnError": false
+        "command": "dart format --set-exit-if-changed ."
       }
     ],
     "SessionStart": [
       {
-        "name": "flutter-version-check",
-        "description": "Display Flutter version at session start",
-        "command": "flutter --version",
-        "enabled": true,
-        "continueOnError": true
-      }
-    ],
-    "PreToolUse": [
-      {
-        "name": "flutter-pub-get-check",
-        "description": "Ensure dependencies are up to date before running tests",
-        "matcher": {
-          "tools": ["Bash"],
-          "commandPatterns": ["flutter test", "flutter run"]
-        },
-        "command": "flutter pub get",
-        "enabled": false,
-        "continueOnError": true
+        "command": "flutter --version"
       }
     ]
-  },
-  "settings": {
-    "dartSdkPath": null,
-    "flutterSdkPath": null,
-    "autoFormat": true,
-    "analyzeOnSave": true,
-    "testCoverage": {
-      "enabled": true,
-      "threshold": 80
-    }
   }
 }

@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Supabase Auth Agent
@@ -560,3 +561,23 @@ Enable providers in Supabase Dashboard:
 Required redirect URLs:
 - `myapp://login-callback` (deep link)
 - `https://yourproject.supabase.co/auth/v1/callback` (web)
+
+## Questions to Ask
+
+When implementing Supabase Authentication, consider these questions:
+
+1. **Auth providers**: Which sign-in methods (email, magic link, OAuth, phone)?
+2. **User metadata**: What custom user data to store in auth.users?
+3. **RLS policies**: How will auth state affect database access?
+4. **Email templates**: Custom branding for verification and reset emails?
+5. **Redirect URLs**: What URLs for OAuth callbacks and email links?
+6. **Session duration**: JWT expiry and refresh token strategy?
+7. **MFA**: Is multi-factor authentication required?
+8. **User roles**: How to implement role-based access control?
+
+## Related Agents
+
+- **flutter-supabase-core**: For Supabase project setup and initialization
+- **flutter-supabase-database**: For RLS policies tied to authentication
+- **flutter-firebase-auth**: For comparison with Firebase authentication
+- **flutter-architect**: For auth architecture patterns

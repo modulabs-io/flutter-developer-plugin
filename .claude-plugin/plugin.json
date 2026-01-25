@@ -2,7 +2,7 @@
   "name": "flutter-developer",
   "version": "1.3.1",
   "description": "Comprehensive Flutter development plugin for Claude Code - supports desktop (Windows, macOS, Linux) and mobile (iOS, Android) development with Firebase, Supabase, and all major state management solutions",
-  "author": "Flutter Developer Plugin Contributors",
+  "author": { "name": "Flutter Developer Plugin Contributors" },
   "license": "MIT",
   "repository": "https://github.com/modulabs-io/flutter-developer-plugin",
   "keywords": [
@@ -21,158 +21,29 @@
     "bloc",
     "provider"
   ],
-  "engines": {
-    "claude-code": ">=1.0.0"
-  },
   "capabilities": {
-    "agents": true,
-    "skills": true,
-    "commands": true,
+    "agents": {
+      "count": 21,
+      "categories": ["core", "firebase", "supabase", "platform"]
+    },
+    "skills": {
+      "count": 43,
+      "categories": ["project", "testing", "build", "firebase", "supabase", "platform", "ffi", "i18n"]
+    },
+    "commands": {
+      "count": 6,
+      "list": [
+        "flutter-new-feature",
+        "flutter-add-state",
+        "flutter-platform-setup",
+        "flutter-add-auth",
+        "flutter-new-widget",
+        "flutter-add-backend"
+      ]
+    },
     "hooks": true,
     "mcp": true
   },
-  "agents": {
-    "directory": "../agents",
-    "count": 21,
-    "categories": {
-      "core": [
-        "flutter-architect",
-        "flutter-state-manager",
-        "flutter-widget-builder",
-        "flutter-test-engineer",
-        "flutter-performance-analyst",
-        "flutter-codegen-assistant",
-        "flutter-ffi-native",
-        "flutter-i18n-expert"
-      ],
-      "firebase": [
-        "flutter-firebase-core",
-        "flutter-firebase-auth",
-        "flutter-firebase-firestore",
-        "flutter-firebase-services"
-      ],
-      "supabase": [
-        "flutter-supabase-core",
-        "flutter-supabase-auth",
-        "flutter-supabase-database",
-        "flutter-supabase-services"
-      ],
-      "platform": [
-        "flutter-ios-platform",
-        "flutter-android-platform",
-        "flutter-macos-platform",
-        "flutter-windows-platform",
-        "flutter-linux-platform"
-      ]
-    }
-  },
-  "skills": {
-    "directory": "../skills",
-    "count": 34,
-    "categories": {
-      "core": [
-        "flutter-create",
-        "flutter-test",
-        "flutter-build",
-        "flutter-analyze",
-        "flutter-codegen",
-        "flutter-doctor",
-        "flutter-migrate",
-        "flutter-accessibility",
-        "flutter-i18n",
-        "flutter-splash"
-      ],
-      "utility": [
-        "flutter-ai-rules",
-        "flutter-run-configs"
-      ],
-      "ffi": [
-        "flutter-ffi-init",
-        "flutter-ffigen",
-        "flutter-jnigen",
-        "flutter-rust-bridge"
-      ],
-      "firebase": [
-        "flutter-firebase-init",
-        "flutter-firebase-auth",
-        "flutter-firebase-db",
-        "flutter-firebase-deploy"
-      ],
-      "supabase": [
-        "flutter-supabase-init",
-        "flutter-supabase-auth",
-        "flutter-supabase-db",
-        "flutter-supabase-deploy"
-      ],
-      "platform": [
-        "flutter-ios-pods",
-        "flutter-ios-signing",
-        "flutter-android-gradle",
-        "flutter-android-signing",
-        "flutter-android-adb",
-        "flutter-macos-package",
-        "flutter-windows-package",
-        "flutter-winapp-setup",
-        "flutter-linux-package",
-        "flutter-pub"
-      ]
-    }
-  },
-  "commands": {
-    "directory": "../commands",
-    "files": [
-      "flutter-new-feature.md",
-      "flutter-add-state.md",
-      "flutter-platform-setup.md"
-    ]
-  },
-  "hooks": {
-    "config": "../hooks/hooks.json"
-  },
-  "mcp": {
-    "config": "../.mcp.json"
-  },
-  "configuration": {
-    "stateManagement": {
-      "supported": [
-        "riverpod",
-        "bloc",
-        "provider"
-      ],
-      "default": "riverpod",
-      "description": "Supported state management solutions"
-    },
-    "architecture": {
-      "supported": [
-        "feature-first",
-        "layer-first"
-      ],
-      "default": "feature-first",
-      "description": "Project architecture pattern"
-    },
-    "backends": {
-      "supported": [
-        "none",
-        "firebase",
-        "supabase"
-      ],
-      "default": "none",
-      "description": "Backend integration options"
-    },
-    "platforms": {
-      "supported": [
-        "ios",
-        "android",
-        "macos",
-        "windows",
-        "linux",
-        "web"
-      ],
-      "default": [
-        "ios",
-        "android"
-      ],
-      "description": "Target platforms"
-    }
-  }
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json"
 }

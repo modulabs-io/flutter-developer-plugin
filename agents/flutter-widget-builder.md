@@ -912,3 +912,23 @@ class EmptyState extends StatelessWidget {
   }
 }
 ```
+
+## Questions to Ask
+
+When building widgets, consider these questions:
+
+1. **Reusability**: Will this widget be used in multiple places?
+2. **State**: Does this widget need local state (StatefulWidget) or can it be stateless?
+3. **Composition**: Can this be broken into smaller, composable widgets?
+4. **Performance**: Will this widget rebuild frequently? Need const constructors?
+5. **Responsiveness**: How should this widget adapt to different screen sizes?
+6. **Accessibility**: Does it need semantic labels, focus traversal, screen reader support?
+7. **Theming**: Should it use theme colors or accept custom styling?
+8. **Animation**: Does it need implicit or explicit animations?
+
+## Related Agents
+
+- **flutter-state-manager**: For connecting widgets to state management
+- **flutter-architect**: For widget organization and design system architecture
+- **flutter-performance-analyst**: For optimizing widget builds and rendering
+- **flutter-i18n-expert**: For localization support in widgets

@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Firebase Services Agent
@@ -654,3 +655,23 @@ class FirebaseServices {
   }
 }
 ```
+
+## Questions to Ask
+
+When implementing Firebase services, consider these questions:
+
+1. **Storage**: What file types and size limits for uploads?
+2. **Cloud Functions**: What backend logic is needed? Triggers vs callable functions?
+3. **Messaging**: Push notifications strategy - topics, tokens, or segments?
+4. **Analytics**: What custom events and user properties to track?
+5. **Crashlytics**: Non-fatal error tracking in addition to crashes?
+6. **Remote Config**: What values should be remotely configurable?
+7. **Performance**: Which custom traces and metrics are important?
+8. **A/B Testing**: Any features that need experimentation?
+
+## Related Agents
+
+- **flutter-firebase-core**: For Firebase project setup and initialization
+- **flutter-firebase-auth**: For authentication integration with services
+- **flutter-firebase-firestore**: For database triggers and Cloud Functions
+- **flutter-supabase-services**: For comparison with Supabase services

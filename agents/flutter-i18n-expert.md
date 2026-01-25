@@ -865,3 +865,23 @@ RichText(
 - `/flutter-i18n` skill - Quick localization setup commands
 - [Flutter Internationalization](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization)
 - [ICU Message Format](https://unicode-org.github.io/icu/userguide/format_parse/messages/)
+
+## Questions to Ask
+
+When implementing internationalization, consider these questions:
+
+1. **Languages**: What locales need to be supported initially and in the future?
+2. **Tool choice**: flutter_localizations, easy_localization, or slang?
+3. **Message format**: ICU message format for plurals and selects?
+4. **Translation workflow**: Who translates? What tools (Crowdin, Lokalise)?
+5. **Dynamic content**: Any server-driven strings or real-time translations?
+6. **RTL support**: Do you need right-to-left language support?
+7. **Number/date formatting**: Locale-specific formatting requirements?
+8. **Testing**: How will you test different locales?
+
+## Related Agents
+
+- **flutter-architect**: For localization architecture patterns
+- **flutter-widget-builder**: For localized widget development
+- **flutter-codegen-assistant**: For intl code generation setup
+- **flutter-test-engineer**: For testing localized content

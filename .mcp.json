@@ -1,22 +1,18 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "description": "MCP server configuration for Flutter Developer Plugin",
   "mcpServers": {
     "dart-flutter": {
-      "description": "Official Dart/Flutter MCP server (Flutter 3.35+)",
-      "note": "Requires Flutter 3.35+ with built-in MCP support",
       "command": "dart",
-      "args": ["run", "mcp_server"],
-      "capabilities": [
-        "analyze_code",
-        "resolve_symbols",
-        "search_pub_dev",
-        "run_tests",
-        "format_code"
-      ]
+      "args": ["mcp-server"]
+    },
+    "pubdev": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/pubdev-mcp-server"]
+    },
+    "flutter-community": {
+      "command": "npx",
+      "args": ["-y", "flutter-mcp"]
     },
     "filesystem": {
-      "description": "File operations with permission model",
       "command": "npx",
       "args": [
         "-y",
@@ -28,7 +24,6 @@
       }
     },
     "git": {
-      "description": "Git repository management",
       "command": "npx",
       "args": [
         "-y",
@@ -38,48 +33,28 @@
       ]
     },
     "github": {
-      "description": "GitHub integration for issues, PRs, and repository management",
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-github"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-github"],
       "env": {
         "GITHUB_TOKEN": "${env:GITHUB_TOKEN}"
       }
     },
     "supabase": {
-      "description": "Supabase MCP server for database design, queries, migrations, RLS",
       "command": "npx",
-      "args": [
-        "-y",
-        "supabase-community/supabase-mcp"
-      ],
+      "args": ["-y", "@supabase/mcp-server-supabase"],
       "env": {
         "SUPABASE_URL": "${env:SUPABASE_URL}",
         "SUPABASE_KEY": "${env:SUPABASE_KEY}"
-      },
-      "capabilities": [
-        "database_design",
-        "run_queries",
-        "create_migrations",
-        "manage_rls_policies",
-        "generate_types"
-      ]
+      }
     },
     "postgres": {
-      "description": "Direct PostgreSQL access for Supabase",
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-postgres"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
       "env": {
         "POSTGRES_CONNECTION_STRING": "${env:DATABASE_URL}"
       }
     },
     "sqlite": {
-      "description": "SQLite database operations for local storage",
       "command": "npx",
       "args": [
         "-y",
@@ -88,38 +63,13 @@
         "${workspaceFolder}/database.db"
       ]
     },
-    "xcode": {
-      "description": "Xcode project management, builds, CocoaPods, simulator control",
-      "command": "npx",
-      "args": [
-        "-y",
-        "r-huijts/xcode-mcp-server"
-      ],
-      "platforms": ["darwin"],
-      "capabilities": [
-        "project_management",
-        "build_management",
-        "cocoapods_integration",
-        "simulator_control"
-      ]
-    },
     "xcode-build": {
-      "description": "Xcode build automation for AI assistants",
       "command": "npx",
-      "args": [
-        "-y",
-        "cameroncooke/XcodeBuildMCP"
-      ],
-      "platforms": ["darwin"]
+      "args": ["-y", "xcodebuildmcp"]
     },
     "app-store-connect": {
-      "description": "App Store Connect integration for app management and TestFlight",
       "command": "npx",
-      "args": [
-        "-y",
-        "JoshuaRileyDev/app-store-connect-mcp-server"
-      ],
-      "platforms": ["darwin"],
+      "args": ["-y", "@joshuarileydev/app-store-connect-mcp-server"],
       "env": {
         "APP_STORE_CONNECT_KEY_ID": "${env:APP_STORE_CONNECT_KEY_ID}",
         "APP_STORE_CONNECT_ISSUER_ID": "${env:APP_STORE_CONNECT_ISSUER_ID}",
@@ -127,152 +77,15 @@
       }
     },
     "android-replicant": {
-      "description": "Android development: Gradle, APK builds, ADB, testing",
       "command": "npx",
-      "args": [
-        "-y",
-        "thecombatwombat/replicant-mcp"
-      ],
-      "env": {
-        "ANDROID_HOME": "${env:ANDROID_HOME}"
-      },
-      "capabilities": [
-        "gradle_management",
-        "apk_builds",
-        "adb_control",
-        "testing"
-      ]
-    },
-    "android-adb": {
-      "description": "ADB device control and management",
-      "command": "npx",
-      "args": [
-        "-y",
-        "minhalvp/android-mcp-server"
-      ],
+      "args": ["-y", "@anthropic/replicant-mcp"],
       "env": {
         "ANDROID_HOME": "${env:ANDROID_HOME}"
       }
-    },
-    "play-store": {
-      "description": "Google Play Console integration",
-      "command": "npx",
-      "args": [
-        "-y",
-        "antoniolg/play-store-mcp"
-      ],
-      "env": {
-        "GOOGLE_APPLICATION_CREDENTIALS": "${env:GOOGLE_APPLICATION_CREDENTIALS}"
-      }
-    },
-    "flutter-community": {
-      "description": "Flutter docs and 50,000+ pub.dev packages",
-      "command": "npx",
-      "args": [
-        "-y",
-        "adamsmaka/flutter-mcp"
-      ],
-      "capabilities": [
-        "flutter_docs",
-        "pub_dev_search",
-        "package_info"
-      ]
     },
     "chrome-devtools": {
-      "description": "Browser automation, network analysis, screenshots",
       "command": "npx",
-      "args": [
-        "-y",
-        "ChromeDevTools/chrome-devtools-mcp"
-      ],
-      "capabilities": [
-        "browser_automation",
-        "network_analysis",
-        "screenshots",
-        "performance_profiling"
-      ]
-    },
-    "npm-helper": {
-      "description": "NPM package search and dependency management",
-      "command": "npx",
-      "args": [
-        "-y",
-        "pinkpixel-dev/npm-helper-mcp"
-      ]
+      "args": ["-y", "chrome-devtools-mcp"]
     }
-  },
-  "profiles": {
-    "flutter-mobile": {
-      "description": "Configuration for mobile development (iOS + Android)",
-      "servers": [
-        "dart-flutter",
-        "filesystem",
-        "git",
-        "github",
-        "xcode",
-        "android-replicant",
-        "android-adb"
-      ]
-    },
-    "flutter-desktop": {
-      "description": "Configuration for desktop development (macOS, Windows, Linux)",
-      "servers": [
-        "dart-flutter",
-        "filesystem",
-        "git",
-        "github"
-      ]
-    },
-    "flutter-firebase": {
-      "description": "Configuration for Firebase-backed Flutter apps",
-      "servers": [
-        "dart-flutter",
-        "filesystem",
-        "git",
-        "github",
-        "xcode",
-        "android-replicant"
-      ]
-    },
-    "flutter-supabase": {
-      "description": "Configuration for Supabase-backed Flutter apps",
-      "servers": [
-        "dart-flutter",
-        "filesystem",
-        "git",
-        "github",
-        "supabase",
-        "postgres",
-        "xcode",
-        "android-replicant"
-      ]
-    },
-    "flutter-full": {
-      "description": "Full configuration with all available MCP servers",
-      "servers": [
-        "dart-flutter",
-        "filesystem",
-        "git",
-        "github",
-        "supabase",
-        "postgres",
-        "sqlite",
-        "xcode",
-        "xcode-build",
-        "app-store-connect",
-        "android-replicant",
-        "android-adb",
-        "play-store",
-        "flutter-community",
-        "chrome-devtools"
-      ]
-    }
-  },
-  "defaultProfile": "flutter-mobile",
-  "notes": {
-    "dart-flutter": "Requires Flutter 3.35+ which includes built-in MCP support. For earlier versions, use flutter-community server.",
-    "platform-servers": "Xcode and App Store Connect servers only work on macOS. Android servers require ANDROID_HOME environment variable.",
-    "environment-variables": "Set required environment variables (GITHUB_TOKEN, SUPABASE_URL, etc.) in your shell profile or .env file.",
-    "firebase": "Firebase does not have an official MCP server yet. Use Firebase CLI directly via Bash commands."
   }
 }

@@ -590,3 +590,10 @@ When designing architecture, consider:
 4. **Testing**: What level of test coverage is required?
 5. **Maintenance**: How long will this project be maintained?
 6. **Platform**: Is it mobile-only or multi-platform?
+
+## Related Agents
+
+- **flutter-state-manager**: For state management implementation guidance
+- **flutter-test-engineer**: For testing strategy and test implementation
+- **flutter-performance-analyst**: For performance optimization in architecture decisions
+- **flutter-codegen-assistant**: For code generation setup in project structure

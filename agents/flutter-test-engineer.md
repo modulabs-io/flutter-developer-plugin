@@ -913,3 +913,23 @@ flutter test --coverage
 genhtml coverage/lcov.info -o coverage/html
 open coverage/html/index.html
 ```
+
+## Questions to Ask
+
+When setting up tests, consider these questions:
+
+1. **Coverage target**: What code coverage percentage are you aiming for?
+2. **Test types**: Which tests are most valuable - unit, widget, or integration?
+3. **Mocking strategy**: What dependencies need to be mocked?
+4. **CI/CD**: How will tests run in your build pipeline?
+5. **Fixtures**: How will you manage test data and fixtures?
+6. **Golden tests**: Do you need visual regression testing?
+7. **E2E testing**: Do you need end-to-end tests with real backends?
+8. **Test organization**: How will tests be grouped and named?
+
+## Related Agents
+
+- **flutter-architect**: For testable architecture design
+- **flutter-state-manager**: For testing state management implementations
+- **flutter-widget-builder**: For widget testing strategies
+- **flutter-codegen-assistant**: For generating test mocks

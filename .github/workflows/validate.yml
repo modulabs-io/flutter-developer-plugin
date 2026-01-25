@@ -15,7 +15,30 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+
+      - name: Check required files exist
+        run: |
+          echo "Checking required files..."
+          required_files=(
+            ".claude-plugin/plugin.json"
+            ".mcp.json"
+            "hooks/hooks.json"
+            "README.md"
+            "CLAUDE.md"
+            "CHANGELOG.md"
+            "LICENSE"
+            "release-please-config.json"
+            ".release-please-manifest.json"
+          )
+          for file in "${required_files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "OK: $file"
+            else
+              echo "ERROR: Missing required file: $file"
+              exit 1
+            fi
+          done
 
       - name: Validate plugin.json
         run: |
@@ -34,6 +57,15 @@ jobs:
           echo "Validating .mcp.json..."
           node -e "JSON.parse(require('fs').readFileSync('.mcp.json'))"
           echo ".mcp.json is valid JSON"
+
+      - name: Validate release-please configs
+        run: |
+          echo "Validating release-please-config.json..."
+          node -e "JSON.parse(require('fs').readFileSync('release-please-config.json'))"
+          echo "release-please-config.json is valid JSON"
+          echo "Validating .release-please-manifest.json..."
+          node -e "JSON.parse(require('fs').readFileSync('.release-please-manifest.json'))"
+          echo ".release-please-manifest.json is valid JSON"
 
       - name: Validate agent count
         run: |
@@ -56,10 +88,25 @@ jobs:
       - name: Validate YAML frontmatter
         run: |
           echo "Checking agent YAML frontmatter..."
+          errors=0
           for file in agents/*.md; do
             if [ -f "$file" ]; then
-              if head -1 "$file" | grep -q "^---$"; then
-                echo "OK: $file"
+              # Check opening delimiter
+              if ! head -1 "$file" | grep -q "^---$"; then
+                echo "ERROR: $file missing opening ---"
+                errors=$((errors + 1))
+                continue
               fi
+              # Check closing delimiter exists (within first 20 lines)
+              if ! head -20 "$file" | tail -n +2 | grep -q "^---$"; then
+                echo "ERROR: $file missing closing ---"
+                errors=$((errors + 1))
+                continue
+              fi
+              echo "OK: $file"
             fi
           done
+          if [ $errors -gt 0 ]; then
+            echo "ERROR: $errors agent(s) have invalid frontmatter"
+            exit 1
+          fi

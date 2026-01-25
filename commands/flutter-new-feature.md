@@ -1,3 +1,35 @@
+---
+name: flutter-new-feature
+description: Create a new feature module following the project's architecture pattern with domain/data/presentation layers
+arguments:
+  - name: feature-name
+    description: Name of the feature in snake_case (e.g., user_profile, shopping_cart)
+    required: true
+    type: string
+  - name: arch
+    description: Architecture pattern to use
+    type: choice
+    options: [feature-first, layer-first]
+    default: feature-first
+  - name: state
+    description: State management solution
+    type: choice
+    options: [riverpod, bloc, provider]
+    default: riverpod
+  - name: crud
+    description: Include CRUD operations scaffolding
+    type: boolean
+    default: false
+  - name: test
+    description: Generate test files
+    type: boolean
+    default: false
+agents:
+  - flutter-architect
+  - flutter-state-manager
+  - flutter-test-engineer
+---
+
 # Flutter New Feature Command
 
 Create a new feature module following the project's architecture pattern.
@@ -21,6 +53,7 @@ Create a new feature module following the project's architecture pattern.
 /flutter-new-feature products
 /flutter-new-feature orders --state riverpod --crud
 /flutter-new-feature settings --arch feature-first --test
+/flutter-new-feature user_profile --state bloc --crud --test
 ```
 
 ## Generated Structure
@@ -149,7 +182,9 @@ class {{Feature}}RepositoryImpl implements {{Feature}}Repository {
 }
 ```
 
-### Provider (Riverpod)
+## State Management Templates
+
+### Riverpod Provider
 
 ```dart
 // lib/features/{{feature}}/presentation/providers/{{feature}}_provider.dart
@@ -194,7 +229,7 @@ class {{Feature}}Notifier extends _${{Feature}}Notifier {
 }
 ```
 
-### List Page
+### Riverpod List Page
 
 ```dart
 // lib/features/{{feature}}/presentation/pages/{{feature}}_list_page.dart
@@ -247,6 +282,180 @@ class {{Feature}}ListPage extends ConsumerWidget {
         error: (error, stack) => Center(
           child: Text('Error: $error'),
         ),
+      ),
+    );
+  }
+}
+```
+
+### Bloc List Page
+
+```dart
+// lib/features/{{feature}}/presentation/pages/{{feature}}_list_page.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/{{feature}}_bloc.dart';
+import '../widgets/{{feature}}_card.dart';
+
+class {{Feature}}ListPage extends StatelessWidget {
+  const {{Feature}}ListPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => {{Feature}}Bloc(
+        context.read<{{Feature}}Repository>(),
+      )..add({{Feature}}Started()),
+      child: const _{{Feature}}ListView(),
+    );
+  }
+}
+
+class _{{Feature}}ListView extends StatelessWidget {
+  const _{{Feature}}ListView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('{{Feature}}s'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              // Navigate to create page
+            },
+          ),
+        ],
+      ),
+      body: BlocBuilder<{{Feature}}Bloc, {{Feature}}State>(
+        builder: (context, state) {
+          return switch (state) {
+            {{Feature}}Initial() => const Center(
+                child: Text('Press refresh to load'),
+              ),
+            {{Feature}}Loading() => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            {{Feature}}Success(:final items) => items.isEmpty
+                ? const Center(child: Text('No items found'))
+                : ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return {{Feature}}Card(
+                        item: items[index],
+                        onTap: () {
+                          // Navigate to detail page
+                        },
+                      );
+                    },
+                  ),
+            {{Feature}}Failure(:final message) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Error: $message'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<{{Feature}}Bloc>().add({{Feature}}Refreshed());
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+          };
+        },
+      ),
+    );
+  }
+}
+```
+
+### Provider List Page
+
+```dart
+// lib/features/{{feature}}/presentation/pages/{{feature}}_list_page.dart
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/{{feature}}_provider.dart';
+import '../widgets/{{feature}}_card.dart';
+
+class {{Feature}}ListPage extends StatefulWidget {
+  const {{Feature}}ListPage({super.key});
+
+  @override
+  State<{{Feature}}ListPage> createState() => _{{Feature}}ListPageState();
+}
+
+class _{{Feature}}ListPageState extends State<{{Feature}}ListPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Load data on init
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<{{Feature}}Provider>().loadAll();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('{{Feature}}s'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              // Navigate to create page
+            },
+          ),
+        ],
+      ),
+      body: Consumer<{{Feature}}Provider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (provider.error != null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error: ${provider.error}'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => provider.loadAll(),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final items = provider.items;
+          if (items.isEmpty) {
+            return const Center(
+              child: Text('No items found'),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return {{Feature}}Card(
+                item: items[index],
+                onTap: () {
+                  // Navigate to detail page
+                },
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -373,3 +582,29 @@ Next Steps:
 3. Wire up repository in providers
 4. Add routes to navigation
 ```
+
+## Validation
+
+The command validates the following before execution:
+
+- **Feature name**: Must be snake_case, start with a letter, and not contain special characters
+- **Directory conflicts**: Checks if `lib/features/{{feature}}` already exists
+- **Project structure**: Verifies `lib/` directory exists and pubspec.yaml is present
+- **Dependencies**: Checks for required packages based on state management choice
+
+## Error Handling
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| Feature already exists | Directory `lib/features/{{feature}}/` exists | Use a different name or delete existing feature |
+| Invalid feature name | Name contains invalid characters | Use snake_case with letters and underscores |
+| Missing dependencies | Required packages not in pubspec.yaml | Run `/flutter-pub add <package>` |
+| Build runner failed | Code generation error | Check generated files for syntax errors |
+
+## Agent Reference
+
+For additional guidance on specific aspects of feature development:
+
+- **Architecture decisions**: Consult the `flutter-architect` agent for guidance on feature structure, layer boundaries, and dependency injection patterns
+- **State management**: Consult the `flutter-state-manager` agent for advanced state patterns, caching strategies, and optimistic updates
+- **Testing strategy**: Consult the `flutter-test-engineer` agent for test organization, mocking strategies, and coverage requirements

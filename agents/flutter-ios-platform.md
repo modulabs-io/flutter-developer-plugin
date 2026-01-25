@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter iOS Platform Agent
@@ -30,6 +31,7 @@ ios/
 │   ├── AppDelegate.swift
 │   ├── Info.plist
 │   ├── Runner-Bridging-Header.h
+│   ├── PrivacyInfo.xcprivacy       # Required for iOS 17+
 │   ├── Assets.xcassets/
 │   │   ├── AppIcon.appiconset/
 │   │   └── LaunchImage.imageset/
@@ -45,13 +47,187 @@ ios/
 └── Pods/
 ```
 
+## Flutter 3.38+ iOS Features
+
+### Impeller Rendering Engine
+
+Impeller is the default rendering engine on iOS since Flutter 3.10, providing:
+
+- **Eliminates shader compilation jank** - Pre-compiled shaders for smooth animations
+- **Consistent 60/120fps** - Stable frame rates on ProMotion displays
+- **Reduced memory usage** - More efficient GPU resource management
+- **Better Metal integration** - Native iOS graphics API optimization
+
+```bash
+# Impeller is enabled by default - no flag needed
+flutter run
+
+# To disable Impeller (not recommended)
+flutter run --no-enable-impeller
+
+# Check if Impeller is active in your app
+# In debug mode, you'll see "Impeller" in the performance overlay
+```
+
+```dart
+// Verify Impeller at runtime
+import 'dart:ui' as ui;
+
+void checkRenderer() {
+  // Returns true if Impeller is active
+  debugPrint('Using Impeller: ${ui.PlatformDispatcher.instance.implicitView != null}');
+}
+```
+
+### Privacy Manifest (iOS 17+)
+
+**Required for App Store submissions.** Apple requires apps to declare data usage and required reason APIs.
+
+Create `ios/Runner/PrivacyInfo.xcprivacy`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Privacy Tracking -->
+    <key>NSPrivacyTracking</key>
+    <false/>
+
+    <!-- Tracking Domains (if tracking is true) -->
+    <key>NSPrivacyTrackingDomains</key>
+    <array/>
+
+    <!-- Collected Data Types -->
+    <key>NSPrivacyCollectedDataTypes</key>
+    <array>
+        <!-- Example: If collecting email -->
+        <dict>
+            <key>NSPrivacyCollectedDataType</key>
+            <string>NSPrivacyCollectedDataTypeEmailAddress</string>
+            <key>NSPrivacyCollectedDataTypeLinked</key>
+            <true/>
+            <key>NSPrivacyCollectedDataTypeTracking</key>
+            <false/>
+            <key>NSPrivacyCollectedDataTypePurposes</key>
+            <array>
+                <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+            </array>
+        </dict>
+    </array>
+
+    <!-- Required Reason APIs -->
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array>
+        <!-- User Defaults -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>CA92.1</string>
+            </array>
+        </dict>
+        <!-- File Timestamp -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>C617.1</string>
+            </array>
+        </dict>
+        <!-- System Boot Time -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategorySystemBootTime</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>35F9.1</string>
+            </array>
+        </dict>
+        <!-- Disk Space -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>E174.1</string>
+            </array>
+        </dict>
+    </array>
+</dict>
+</plist>
+```
+
+**Common Required Reason API Codes:**
+| API Category | Reason Code | Description |
+|--------------|-------------|-------------|
+| UserDefaults | CA92.1 | Access to read/write user preferences |
+| FileTimestamp | C617.1 | File modification dates for caching |
+| SystemBootTime | 35F9.1 | Calculate time intervals |
+| DiskSpace | E174.1 | Check available storage |
+
+### Swift Concurrency Support
+
+Flutter 3.38+ fully supports Swift's async/await for platform channels:
+
+```swift
+// ios/Runner/AppDelegate.swift
+import UIKit
+import Flutter
+
+@main
+@objc class AppDelegate: FlutterAppDelegate {
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -> Bool {
+    let controller = window?.rootViewController as! FlutterViewController
+    let channel = FlutterMethodChannel(
+      name: "com.example.app/native",
+      binaryMessenger: controller.binaryMessenger
+    )
+
+    channel.setMethodCallHandler { [weak self] call, result in
+      Task {
+        await self?.handleMethodCall(call: call, result: result)
+      }
+    }
+
+    GeneratedPluginRegistrant.register(with: self)
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  func handleMethodCall(call: FlutterMethodCall, result: @escaping FlutterResult) async {
+    switch call.method {
+    case "fetchData":
+      do {
+        let data = try await fetchDataAsync()
+        result(data)
+      } catch {
+        result(FlutterError(code: "ERROR", message: error.localizedDescription, details: nil))
+      }
+    default:
+      result(FlutterMethodNotImplemented)
+    }
+  }
+
+  func fetchDataAsync() async throws -> String {
+    // Async Swift code
+    try await Task.sleep(nanoseconds: 1_000_000_000)
+    return "Data from Swift"
+  }
+}
+```
+
 ## Xcode Configuration
 
 ### Build Settings
 
 ```ruby
 # ios/Podfile
-platform :ios, '12.0'
+platform :ios, '13.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -96,7 +272,7 @@ post_install do |installer|
 
     # Additional build settings
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
 
       # Enable arm64 for simulator (Apple Silicon)
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = ''
@@ -664,3 +840,229 @@ workflows:
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
 ```
+
+## SwiftUI Integration
+
+### FlutterMethodChannel with SwiftUI
+
+```swift
+// ios/Runner/NativeViews/SwiftUIBridge.swift
+import SwiftUI
+import Flutter
+
+@available(iOS 13.0, *)
+class SwiftUIBridge: ObservableObject {
+    @Published var data: String = ""
+    private var channel: FlutterMethodChannel?
+
+    init(messenger: FlutterBinaryMessenger) {
+        channel = FlutterMethodChannel(
+            name: "com.example.app/swiftui",
+            binaryMessenger: messenger
+        )
+
+        channel?.setMethodCallHandler { [weak self] call, result in
+            switch call.method {
+            case "updateData":
+                if let args = call.arguments as? [String: Any],
+                   let newData = args["data"] as? String {
+                    DispatchQueue.main.async {
+                        self?.data = newData
+                    }
+                    result(nil)
+                } else {
+                    result(FlutterError(code: "INVALID_ARGS", message: nil, details: nil))
+                }
+            default:
+                result(FlutterMethodNotImplemented)
+            }
+        }
+    }
+
+    func sendToFlutter(_ message: String) {
+        channel?.invokeMethod("onSwiftUIMessage", arguments: ["message": message])
+    }
+}
+```
+
+### Hosting SwiftUI in Flutter
+
+```swift
+// ios/Runner/NativeViews/SwiftUIViewFactory.swift
+import Flutter
+import SwiftUI
+
+@available(iOS 13.0, *)
+class SwiftUIViewFactory: NSObject, FlutterPlatformViewFactory {
+    private var messenger: FlutterBinaryMessenger
+
+    init(messenger: FlutterBinaryMessenger) {
+        self.messenger = messenger
+        super.init()
+    }
+
+    func create(
+        withFrame frame: CGRect,
+        viewIdentifier viewId: Int64,
+        arguments args: Any?
+    ) -> FlutterPlatformView {
+        return SwiftUIPlatformView(
+            frame: frame,
+            viewId: viewId,
+            args: args,
+            messenger: messenger
+        )
+    }
+
+    func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
+        return FlutterStandardMessageCodec.sharedInstance()
+    }
+}
+
+@available(iOS 13.0, *)
+class SwiftUIPlatformView: NSObject, FlutterPlatformView {
+    private var hostingController: UIHostingController<AnyView>?
+
+    init(frame: CGRect, viewId: Int64, args: Any?, messenger: FlutterBinaryMessenger) {
+        super.init()
+
+        let bridge = SwiftUIBridge(messenger: messenger)
+        let swiftUIView = NativeSwiftUIView(bridge: bridge)
+
+        hostingController = UIHostingController(rootView: AnyView(swiftUIView))
+        hostingController?.view.frame = frame
+        hostingController?.view.backgroundColor = .clear
+    }
+
+    func view() -> UIView {
+        return hostingController?.view ?? UIView()
+    }
+}
+
+// Example SwiftUI View
+@available(iOS 13.0, *)
+struct NativeSwiftUIView: View {
+    @ObservedObject var bridge: SwiftUIBridge
+
+    var body: some View {
+        VStack {
+            Text("SwiftUI View")
+                .font(.headline)
+            Text(bridge.data)
+                .font(.body)
+            Button("Send to Flutter") {
+                bridge.sendToFlutter("Hello from SwiftUI!")
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .padding()
+    }
+}
+```
+
+### Register SwiftUI View in AppDelegate
+
+```swift
+// ios/Runner/AppDelegate.swift
+import UIKit
+import Flutter
+
+@main
+@objc class AppDelegate: FlutterAppDelegate {
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -> Bool {
+    GeneratedPluginRegistrant.register(with: self)
+
+    // Register SwiftUI platform view
+    if #available(iOS 13.0, *) {
+      let registrar = self.registrar(forPlugin: "SwiftUIPlugin")!
+      let factory = SwiftUIViewFactory(messenger: registrar.messenger())
+      registrar.register(factory, withId: "swiftui-view")
+    }
+
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
+```
+
+### Use SwiftUI View in Flutter
+
+```dart
+// lib/widgets/native_swiftui_view.dart
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+
+class NativeSwiftUIView extends StatefulWidget {
+  const NativeSwiftUIView({super.key});
+
+  @override
+  State<NativeSwiftUIView> createState() => _NativeSwiftUIViewState();
+}
+
+class _NativeSwiftUIViewState extends State<NativeSwiftUIView> {
+  late final MethodChannel _channel;
+
+  @override
+  void initState() {
+    super.initState();
+    _channel = const MethodChannel('com.example.app/swiftui');
+    _channel.setMethodCallHandler(_handleMethodCall);
+  }
+
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case 'onSwiftUIMessage':
+        final message = call.arguments['message'] as String;
+        debugPrint('Message from SwiftUI: $message');
+        break;
+    }
+  }
+
+  void sendToSwiftUI(String data) {
+    _channel.invokeMethod('updateData', {'data': data});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (defaultTargetPlatform != TargetPlatform.iOS) {
+      return const Center(child: Text('iOS only'));
+    }
+
+    return const UiKitView(
+      viewType: 'swiftui-view',
+      creationParamsCodec: StandardMessageCodec(),
+    );
+  }
+}
+```
+
+## Questions to Ask
+
+When configuring iOS for your Flutter app, consider these questions:
+
+1. **Minimum iOS version**: What's the oldest iOS version to support? (iOS 13.0+ recommended)
+2. **Code signing**: Manual or automatic signing? Who manages certificates?
+3. **Distribution method**: Ad Hoc, Enterprise, or App Store distribution?
+4. **Capabilities**: Which iOS capabilities are needed?
+   - Push notifications
+   - Sign in with Apple
+   - App Groups
+   - iCloud
+   - HealthKit
+   - HomeKit
+5. **Native code**: Do you need SwiftUI or UIKit integration?
+6. **CI/CD**: GitHub Actions, Codemagic, Bitrise, or Xcode Cloud?
+7. **App Extensions**: Widgets, share extensions, or notification extensions needed?
+8. **Privacy manifest**: What data does your app collect and why?
+9. **TestFlight**: Internal testing, external testing, or both?
+10. **App Store**: Any specific App Review considerations or compliance requirements?
+
+## Related Agents
+
+- **flutter-android-platform**: For cross-platform mobile deployment considerations
+- **flutter-macos-platform**: For Apple ecosystem code sharing and signing
+- **flutter-ffi-native**: For iOS native code integration
+- **flutter-firebase-core**: For Firebase iOS setup

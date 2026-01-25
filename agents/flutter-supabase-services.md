@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Supabase Services Agent
@@ -650,3 +651,23 @@ serve(async (req) => {
   return new Response('OK', { status: 200 })
 })
 ```
+
+## Questions to Ask
+
+When implementing Supabase services, consider these questions:
+
+1. **Storage**: File size limits, allowed types, and bucket policies?
+2. **Edge Functions**: What serverless logic is needed? Deno or Node.js?
+3. **Real-time**: Which features need live updates (chat, collaboration)?
+4. **Webhooks**: External service integrations needed?
+5. **Scheduled jobs**: Any recurring tasks (cleanup, reports)?
+6. **Vector search**: AI/ML features requiring pgvector?
+7. **CDN caching**: Image transformation and caching strategy?
+8. **Secrets management**: How to handle API keys in Edge Functions?
+
+## Related Agents
+
+- **flutter-supabase-core**: For Supabase project setup and initialization
+- **flutter-supabase-auth**: For authentication integration with services
+- **flutter-supabase-database**: For database triggers and functions
+- **flutter-firebase-services**: For comparison with Firebase services

@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Linux Platform Agent
@@ -670,3 +671,25 @@ snapcraft --debug
 # Flatpak issues
 flatpak-builder --show-manifest com.example.myapp.yml
 ```
+
+## Questions to Ask
+
+When configuring Linux for your Flutter app, consider these questions:
+
+1. **Distributions**: Which Linux distros do you need to support?
+2. **Packaging**: Snap, Flatpak, AppImage, or .deb/.rpm?
+3. **Dependencies**: What system libraries are required?
+4. **Desktop environment**: GTK theming and integration requirements?
+5. **Native code**: C/C++ platform channels or FFI needed?
+6. **File paths**: XDG Base Directory compliance?
+7. **Window management**: Single instance, tiling WM compatibility?
+8. **Wayland**: Wayland vs X11 support requirements?
+9. **System integration**: D-Bus services, notifications, media keys?
+10. **Distribution channels**: Flathub, Snap Store, or AUR?
+
+## Related Agents
+
+- **flutter-macos-platform**: For cross-platform desktop considerations
+- **flutter-windows-platform**: For cross-platform desktop deployment
+- **flutter-ffi-native**: For Linux native code integration
+- **flutter-architect**: For platform-specific architecture patterns

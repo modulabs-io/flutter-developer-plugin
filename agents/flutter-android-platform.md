@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Android Platform Agent
@@ -790,3 +791,25 @@ flutter build apk --release --flavor prod
 # List available variants
 cd android && ./gradlew tasks | grep assemble
 ```
+
+## Questions to Ask
+
+When configuring Android for your Flutter app, consider these questions:
+
+1. **Minimum SDK**: What's the minimum Android version to support? (API 21+ recommended)
+2. **Target SDK**: Which target SDK level for latest Android features?
+3. **App signing**: Play App Signing or self-managed keystores?
+4. **Distribution**: Play Store, side-loading, or enterprise distribution?
+5. **Build variants**: Do you need debug, staging, and release flavors?
+6. **ProGuard/R8**: Code shrinking and obfuscation requirements?
+7. **Native code**: Kotlin/Java platform channels or NDK integration needed?
+8. **Permissions**: Which runtime permissions are required?
+9. **Deep linking**: App Links configuration needed?
+10. **CI/CD**: GitHub Actions, Codemagic, or Bitrise for builds?
+
+## Related Agents
+
+- **flutter-ios-platform**: For cross-platform mobile deployment considerations
+- **flutter-ffi-native**: For Android NDK and JNI integration
+- **flutter-firebase-core**: For Firebase Android setup
+- **flutter-architect**: For platform-specific architecture patterns

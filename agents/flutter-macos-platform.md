@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter macOS Platform Agent
@@ -635,3 +636,25 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 # Reset pods
 cd macos && rm -rf Pods Podfile.lock && pod install
 ```
+
+## Questions to Ask
+
+When configuring macOS for your Flutter app, consider these questions:
+
+1. **Minimum macOS**: What's the minimum macOS version to support? (10.14+ recommended)
+2. **App Sandbox**: Is sandboxing required for Mac App Store?
+3. **Entitlements**: What capabilities are needed (network, files, camera)?
+4. **Code signing**: Developer ID for direct distribution or Mac App Store?
+5. **Distribution**: Mac App Store, Homebrew, or direct download?
+6. **Notarization**: Required for apps distributed outside the App Store
+7. **Native code**: Swift/Objective-C platform channels needed?
+8. **Menu bar**: Custom menu items or menu bar app?
+9. **Window management**: Multiple windows, resizing constraints?
+10. **System integration**: Services, share extensions, or widgets?
+
+## Related Agents
+
+- **flutter-ios-platform**: For Apple ecosystem code sharing and signing
+- **flutter-windows-platform**: For cross-platform desktop considerations
+- **flutter-linux-platform**: For cross-platform desktop deployment
+- **flutter-ffi-native**: For macOS native code integration

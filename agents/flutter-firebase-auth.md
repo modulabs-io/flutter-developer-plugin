@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Firebase Auth Agent
@@ -592,3 +593,23 @@ void main() {
   });
 }
 ```
+
+## Questions to Ask
+
+When implementing Firebase Authentication, consider these questions:
+
+1. **Auth providers**: Which sign-in methods do you need (email, Google, Apple, phone)?
+2. **User profile**: What user data should be stored beyond basic auth info?
+3. **Session management**: How long should sessions last? Remember me functionality?
+4. **Email verification**: Is email verification required before access?
+5. **Password policies**: Minimum password strength requirements?
+6. **Account linking**: Can users link multiple auth providers to one account?
+7. **Anonymous auth**: Should users be able to use the app before signing up?
+8. **Security rules**: How will auth state integrate with Firestore security rules?
+
+## Related Agents
+
+- **flutter-firebase-core**: For Firebase project setup and initialization
+- **flutter-firebase-firestore**: For user data storage with Firestore
+- **flutter-supabase-auth**: For comparison with Supabase authentication
+- **flutter-architect**: For auth architecture patterns

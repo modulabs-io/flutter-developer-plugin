@@ -12,10 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
 
       - name: Create plugin zip
         env:
-          TAG_NAME: ${{ github.ref_name }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
           zip -r "flutter-developer-plugin-${TAG_NAME}.zip" \
             .claude-plugin \
@@ -25,11 +27,14 @@ jobs:
             commands \
             hooks \
             README.md \
+            CLAUDE.md \
             CHANGELOG.md \
             LICENSE \
             -x "*.git*"
 
       - name: Upload to release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: flutter-developer-plugin-${{ github.ref_name }}.zip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          gh release upload "${TAG_NAME}" "flutter-developer-plugin-${TAG_NAME}.zip" --clobber

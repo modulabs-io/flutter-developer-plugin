@@ -1,3 +1,32 @@
+---
+name: flutter-platform-setup
+description: Configure platform-specific settings for iOS, Android, macOS, Windows, or Linux
+arguments:
+  - name: platform
+    description: Target platform to configure
+    required: true
+    type: choice
+    options: [ios, android, macos, windows, linux, all]
+  - name: permissions
+    description: Comma-separated list of permissions to add (camera, photos, microphone, location, contacts, calendar, bluetooth, biometrics, notifications, network)
+    type: string
+    required: false
+  - name: signing
+    description: Set up code signing configuration
+    type: boolean
+    default: false
+  - name: icons
+    description: Generate app icons using flutter_launcher_icons
+    type: boolean
+    default: false
+agents:
+  - flutter-ios-platform
+  - flutter-android-platform
+  - flutter-macos-platform
+  - flutter-windows-platform
+  - flutter-linux-platform
+---
+
 # Flutter Platform Setup Command
 
 Configure platform-specific settings for iOS, Android, macOS, Windows, or Linux.
@@ -19,19 +48,21 @@ Configure platform-specific settings for iOS, Android, macOS, Windows, or Linux.
 
 ## Options
 
-- `--permissions <list>`: Add required permissions
+- `--permissions <list>`: Add required permissions (comma-separated)
 - `--signing`: Set up code signing
-- `--deeplinks <scheme>`: Configure deep linking
 - `--icons`: Generate app icons
-- `--splash`: Configure splash screen
+
+> **Note:** For splash screen configuration, use the dedicated `/flutter-splash` skill.
+> For deep linking setup, use the dedicated `/flutter-deeplinks` skill.
 
 ## Examples
 
 ```
 /flutter-platform-setup ios --permissions camera,photos
-/flutter-platform-setup android --signing --deeplinks myapp
+/flutter-platform-setup android --signing
 /flutter-platform-setup macos --permissions network
 /flutter-platform-setup all --icons
+/flutter-platform-setup ios --permissions camera,microphone,location --signing
 ```
 
 ## iOS Configuration
@@ -78,29 +109,6 @@ Configure platform-specific settings for iOS, Android, macOS, Windows, or Linux.
 <string>This app uses Face ID for authentication</string>
 ```
 
-### Deep Links
-
-```xml
-<!-- ios/Runner/Info.plist -->
-<key>CFBundleURLTypes</key>
-<array>
-    <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-            <string>{{scheme}}</string>
-        </array>
-    </dict>
-</array>
-
-<!-- Universal Links -->
-<key>com.apple.developer.associated-domains</key>
-<array>
-    <string>applinks:{{domain}}</string>
-</array>
-```
-
 ### Entitlements
 
 ```xml
@@ -112,6 +120,30 @@ Configure platform-specific settings for iOS, Android, macOS, Windows, or Linux.
 <array>
     <string>Default</string>
 </array>
+```
+
+### Code Signing
+
+When `--signing` is specified for iOS:
+
+1. Creates or updates `ios/ExportOptions.plist`
+2. Configures signing in `ios/Runner.xcodeproj/project.pbxproj`
+3. Sets up automatic signing team selection
+
+```xml
+<!-- ios/ExportOptions.plist -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>app-store</string>
+    <key>teamID</key>
+    <string>YOUR_TEAM_ID</string>
+    <key>signingStyle</key>
+    <string>automatic</string>
+</dict>
+</plist>
 ```
 
 ## Android Configuration
@@ -157,29 +189,6 @@ Configure platform-specific settings for iOS, Android, macOS, Windows, or Linux.
 <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
 ```
 
-### Deep Links
-
-```xml
-<!-- android/app/src/main/AndroidManifest.xml -->
-<activity android:name=".MainActivity">
-    <!-- Deep Links -->
-    <intent-filter android:autoVerify="true">
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="{{scheme}}" android:host="callback"/>
-    </intent-filter>
-
-    <!-- App Links -->
-    <intent-filter android:autoVerify="true">
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="https" android:host="{{domain}}"/>
-    </intent-filter>
-</activity>
-```
-
 ### Network Security
 
 ```xml
@@ -196,6 +205,46 @@ Configure platform-specific settings for iOS, Android, macOS, Windows, or Linux.
         <domain includeSubdomains="true">10.0.2.2</domain>
     </domain-config>
 </network-security-config>
+```
+
+### Code Signing
+
+When `--signing` is specified for Android:
+
+1. Creates `android/key.properties` template
+2. Updates `android/app/build.gradle` with signing config
+
+```properties
+# android/key.properties
+storePassword=<your-store-password>
+keyPassword=<your-key-password>
+keyAlias=upload
+storeFile=<path-to-keystore>
+```
+
+```gradle
+// android/app/build.gradle
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+}
 ```
 
 ## macOS Configuration
@@ -272,11 +321,15 @@ MimeType=x-scheme-handler/myapp;
 
 ## App Icons Generation
 
+When `--icons` is specified:
+
 ```bash
 # Install flutter_launcher_icons
 flutter pub add dev:flutter_launcher_icons
+```
 
-# Configure in pubspec.yaml
+```yaml
+# flutter_launcher_icons.yaml or pubspec.yaml
 flutter_launcher_icons:
   android: true
   ios: true
@@ -286,31 +339,23 @@ flutter_launcher_icons:
   image_path: "assets/icons/app_icon.png"
   adaptive_icon_background: "#ffffff"
   adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+```
 
+```bash
 # Generate icons
 dart run flutter_launcher_icons
 ```
 
-## Splash Screen Configuration
+## Execution Steps
 
-```bash
-# Install flutter_native_splash
-flutter pub add dev:flutter_native_splash
+When `/flutter-platform-setup` is invoked:
 
-# Configure in pubspec.yaml
-flutter_native_splash:
-  color: "#ffffff"
-  image: assets/splash/splash_logo.png
-  android: true
-  ios: true
-  android_12:
-    color: "#ffffff"
-    icon_background_color: "#ffffff"
-    image: assets/splash/splash_logo.png
-
-# Generate splash
-dart run flutter_native_splash:create
-```
+1. Parse platform and options
+2. Validate platform directory exists
+3. Add requested permissions to platform config files
+4. Configure code signing if requested
+5. Generate app icons if requested
+6. Output summary of changes
 
 ## Output Summary
 
@@ -326,10 +371,6 @@ Permissions Added:
 - Microphone ✓
 - Location ✓
 
-Deep Links:
-- Scheme: {{scheme}}://
-- Universal Links: https://{{domain}}
-
 Files Modified:
 - ios/Runner/Info.plist
 - ios/Runner/Runner.entitlements
@@ -343,7 +384,43 @@ Icons Generated:
 
 Next Steps:
 1. Test permissions on device
-2. Verify deep links work
-3. Test universal links with apple-app-site-association
-4. Verify assetlinks.json for Android App Links
+2. Update permission descriptions with app-specific text
+3. For signing, replace placeholder values in key.properties
 ```
+
+## Related Skills
+
+For additional platform configuration tasks, use these dedicated skills:
+
+- **Splash Screen**: Use `/flutter-splash` to configure native splash screens
+- **Deep Links**: Use `/flutter-deeplinks` to set up URL scheme and universal/app links
+- **Flavors**: Use `/flutter-flavors` to set up build flavors for different environments
+
+## Validation
+
+The command validates the following before execution:
+
+- **Platform directory**: Verifies the platform directory exists (e.g., `ios/`, `android/`)
+- **Flutter project**: Confirms `pubspec.yaml` exists
+- **Icon source**: If `--icons`, checks that source image exists at specified path
+- **Permission names**: Validates permission names are recognized
+
+## Error Handling
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| Platform not found | Platform directory doesn't exist | Run `flutter create --platforms=<platform> .` |
+| Invalid permission | Unrecognized permission name | Check supported permissions list |
+| Icon source missing | Icon image file not found | Create icon at `assets/icons/app_icon.png` |
+| Signing config failed | Missing Xcode project files | Ensure iOS project is properly configured |
+| Entitlements missing | Runner.entitlements file not found | Create entitlements file in Xcode |
+
+## Agent Reference
+
+For platform-specific guidance:
+
+- **iOS**: Consult the `flutter-ios-platform` agent for iOS-specific configuration, App Store submission, and TestFlight setup
+- **Android**: Consult the `flutter-android-platform` agent for Android-specific configuration, Play Store requirements, and ProGuard rules
+- **macOS**: Consult the `flutter-macos-platform` agent for macOS sandbox configuration, notarization, and Mac App Store submission
+- **Windows**: Consult the `flutter-windows-platform` agent for Windows packaging, MSIX configuration, and Microsoft Store submission
+- **Linux**: Consult the `flutter-linux-platform` agent for Linux packaging (Snap, Flatpak, AppImage) and distribution

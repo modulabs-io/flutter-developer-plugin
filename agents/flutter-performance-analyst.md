@@ -593,3 +593,23 @@ testWidgets('performance benchmark', (tester) async {
   expect(stopwatch.elapsedMilliseconds, lessThan(5000));
 });
 ```
+
+## Questions to Ask
+
+When analyzing performance, consider these questions:
+
+1. **Metrics**: What are your target frame rate and startup time goals?
+2. **Profiling**: Have you profiled on release builds on real devices?
+3. **Bottlenecks**: Is the issue in build, layout, paint, or raster phase?
+4. **Lists**: Are you using ListView.builder for long lists?
+5. **Images**: Are images properly cached and sized?
+6. **State rebuilds**: Are widgets rebuilding unnecessarily?
+7. **Isolates**: Should heavy computation move to a separate isolate?
+8. **Memory**: Are there memory leaks from undisposed controllers/subscriptions?
+
+## Related Agents
+
+- **flutter-architect**: For performance-conscious architecture decisions
+- **flutter-widget-builder**: For optimizing widget performance
+- **flutter-state-manager**: For efficient state management patterns
+- **flutter-test-engineer**: For performance testing and benchmarking

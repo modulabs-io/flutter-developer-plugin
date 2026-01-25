@@ -644,3 +644,24 @@ void main() {
   });
 }
 ```
+
+## Questions to Ask
+
+When implementing FFI/native code, consider these questions:
+
+1. **Use case**: Why do you need native code (performance, existing library, hardware access)?
+2. **Platforms**: Which platforms need native implementations?
+3. **Language**: C, C++, Rust, or platform-specific (Swift, Kotlin)?
+4. **Binding generation**: Manual bindings or use ffigen/jnigen?
+5. **Memory management**: Who owns memory - Dart or native side?
+6. **Threading**: Does native code need to run on separate threads?
+7. **Error handling**: How will native errors be propagated to Dart?
+8. **Testing**: How will you test native code and FFI bindings?
+
+## Related Agents
+
+- **flutter-architect**: For integrating FFI code into project architecture
+- **flutter-codegen-assistant**: For ffigen configuration and bindings
+- **flutter-ios-platform**: For iOS native integration specifics
+- **flutter-android-platform**: For Android NDK and JNI integration
+- **flutter-windows-platform**: For Windows native code integration

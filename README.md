@@ -5,7 +5,7 @@ A comprehensive Claude Code plugin that teaches Claude how to develop Flutter ap
 ## Features
 
 - **21 Specialized Agents** for Flutter development guidance
-- **33 Slash Commands** for common development tasks
+- **43 Slash Commands** for common development tasks
 - **Multi-Platform Support**: iOS, Android, macOS, Windows, Linux, Web (Wasm)
 - **State Management**: Riverpod, Bloc, and Provider
 - **Backend Integrations**: Firebase and Supabase
@@ -161,14 +161,47 @@ lib/
 
 ## MCP Server Integrations
 
-The plugin configures recommended MCP servers for enhanced functionality:
+The plugin configures 13 MCP servers for enhanced Flutter development:
 
-- **Dart/Flutter MCP**: Code analysis, pub.dev search, test running
-- **Filesystem**: File operations with permission model
-- **Git/GitHub**: Repository and PR management
-- **Supabase MCP**: Database design, migrations, RLS
-- **Xcode MCP**: iOS/macOS project management
-- **Replicant**: Android development automation
+| Server | Package | Purpose |
+|--------|---------|---------|
+| `dart-flutter` | `dart mcp-server` | Dart/Flutter analysis and commands |
+| `pubdev` | `@anthropic/pubdev-mcp-server` | pub.dev package search and info |
+| `flutter-community` | `flutter-mcp` | Community Flutter tooling |
+| `filesystem` | `@modelcontextprotocol/server-filesystem` | File operations with permissions |
+| `git` | `@modelcontextprotocol/server-git` | Git repository operations |
+| `github` | `@modelcontextprotocol/server-github` | GitHub API integration |
+| `supabase` | `@supabase/mcp-server-supabase` | Supabase backend operations |
+| `postgres` | `@modelcontextprotocol/server-postgres` | PostgreSQL database |
+| `sqlite` | `@modelcontextprotocol/server-sqlite` | SQLite database |
+| `xcode-build` | `xcodebuildmcp` | Xcode project/build management |
+| `app-store-connect` | `@joshuarileydev/app-store-connect-mcp-server` | App Store Connect API |
+| `android-replicant` | `@anthropic/replicant-mcp` | Android device automation |
+| `chrome-devtools` | `chrome-devtools-mcp` | Chrome DevTools debugging |
+
+### Required Environment Variables
+
+Set these environment variables for full MCP server functionality:
+
+```bash
+# GitHub (required for github server)
+export GITHUB_TOKEN="your-github-token"
+
+# Supabase (required for supabase server)
+export SUPABASE_URL="https://your-project.supabase.co"
+export SUPABASE_KEY="your-supabase-anon-key"
+
+# Database (required for postgres server)
+export DATABASE_URL="postgresql://user:pass@host:5432/db"
+
+# Android (required for android-replicant server)
+export ANDROID_HOME="/path/to/android/sdk"
+
+# App Store Connect (required for app-store-connect server)
+export APP_STORE_CONNECT_KEY_ID="your-key-id"
+export APP_STORE_CONNECT_ISSUER_ID="your-issuer-id"
+export APP_STORE_CONNECT_PRIVATE_KEY="your-private-key-content"
+```
 
 ## Hooks
 

@@ -1,3 +1,34 @@
+---
+name: flutter-add-state
+description: Add state management to an existing feature or create new state management files
+arguments:
+  - name: feature-name
+    description: Name of the existing feature to add state management to
+    required: true
+    type: string
+  - name: type
+    description: State management solution to use
+    type: choice
+    options: [riverpod, bloc, provider]
+    default: riverpod
+  - name: async
+    description: Include async state handling with loading/error states
+    type: boolean
+    default: false
+  - name: persist
+    description: Add persistence support (Hive for Riverpod, HydratedBloc for Bloc)
+    type: boolean
+    default: false
+  - name: migrate
+    description: Source state manager to migrate from
+    type: choice
+    options: [riverpod, bloc, provider]
+    required: false
+agents:
+  - flutter-state-manager
+  - flutter-architect
+---
+
 # Flutter Add State Command
 
 Add state management to an existing feature or create new state management files.
@@ -387,6 +418,18 @@ When migrating between state managers, the command will:
 4. Update imports in consuming widgets
 5. Mark old files for removal
 
+## Execution Steps
+
+When `/flutter-add-state` is invoked:
+
+1. Parse feature name and options
+2. Detect existing feature structure
+3. Check for existing state management
+4. Generate state management files
+5. Update barrel exports if present
+6. Run `dart run build_runner build` for Riverpod
+7. Output summary of created/modified files
+
 ## Output Summary
 
 ```
@@ -412,3 +455,30 @@ Next Steps:
 3. Update UI to consume providers
 4. Add error handling as needed
 ```
+
+## Validation
+
+The command validates the following before execution:
+
+- **Feature exists**: Checks if `lib/features/{{feature}}/` directory exists
+- **No duplicate state**: Warns if state management already exists (unless migrating)
+- **Repository interface**: Verifies repository interface exists in domain layer
+- **Dependencies**: Checks for required packages in pubspec.yaml
+
+## Error Handling
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| Feature not found | Directory `lib/features/{{feature}}/` doesn't exist | Create feature first with `/flutter-new-feature` |
+| State already exists | State management files already present | Use `--migrate` to switch or manually remove existing files |
+| Missing repository | No repository interface in domain layer | Create repository interface first |
+| Missing dependencies | Required packages not in pubspec.yaml | Run `/flutter-pub add <package>` |
+| Build runner failed | Code generation error (Riverpod) | Check provider annotations and imports |
+
+## Agent Reference
+
+For additional guidance on state management:
+
+- **State patterns**: Consult the `flutter-state-manager` agent for advanced patterns like caching, optimistic updates, pagination, and real-time sync
+- **Architecture integration**: Consult the `flutter-architect` agent for guidance on how state management fits into the overall architecture
+- **Performance**: Consult the `flutter-performance-analyst` agent for state rebuild optimization and avoiding unnecessary re-renders

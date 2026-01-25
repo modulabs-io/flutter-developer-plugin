@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Firebase Core Agent
@@ -114,6 +115,158 @@ Future<void> main() async {
   }
 
   runApp(const MyApp());
+}
+```
+
+### Production-Ready Error Handling
+
+For production applications, implement a robust error handling pattern using sealed classes:
+
+```dart
+// lib/core/firebase/firebase_result.dart
+sealed class FirebaseResult<T> {
+  const FirebaseResult();
+}
+
+final class FirebaseSuccess<T> extends FirebaseResult<T> {
+  final T data;
+  const FirebaseSuccess(this.data);
+}
+
+final class FirebaseFailure<T> extends FirebaseResult<T> {
+  final FirebaseError error;
+  const FirebaseFailure(this.error);
+}
+
+// Error type hierarchy
+sealed class FirebaseError {
+  final String message;
+  final String? code;
+  final StackTrace? stackTrace;
+
+  const FirebaseError({
+    required this.message,
+    this.code,
+    this.stackTrace,
+  });
+}
+
+final class FirebaseNetworkError extends FirebaseError {
+  const FirebaseNetworkError({
+    required super.message,
+    super.code,
+    super.stackTrace,
+  });
+}
+
+final class FirebaseAuthError extends FirebaseError {
+  const FirebaseAuthError({
+    required super.message,
+    super.code,
+    super.stackTrace,
+  });
+}
+
+final class FirebaseConfigError extends FirebaseError {
+  const FirebaseConfigError({
+    required super.message,
+    super.code,
+    super.stackTrace,
+  });
+}
+
+final class FirebaseUnknownError extends FirebaseError {
+  const FirebaseUnknownError({
+    required super.message,
+    super.code,
+    super.stackTrace,
+  });
+}
+```
+
+```dart
+// lib/core/firebase/firebase_initializer.dart
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'firebase_result.dart';
+
+class FirebaseInitializer {
+  static const int _maxRetries = 3;
+  static const Duration _retryDelay = Duration(seconds: 2);
+
+  /// Initialize Firebase with retry logic
+  static Future<FirebaseResult<FirebaseApp>> initialize({
+    required FirebaseOptions options,
+    int maxRetries = _maxRetries,
+  }) async {
+    FirebaseError? lastError;
+
+    for (var attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        final app = await Firebase.initializeApp(options: options);
+        return FirebaseSuccess(app);
+      } on FirebaseException catch (e, stack) {
+        lastError = _mapFirebaseException(e, stack);
+
+        if (attempt < maxRetries) {
+          debugPrint('Firebase init attempt $attempt failed, retrying...');
+          await Future.delayed(_retryDelay * attempt);
+        }
+      } catch (e, stack) {
+        lastError = FirebaseUnknownError(
+          message: e.toString(),
+          stackTrace: stack,
+        );
+
+        if (attempt < maxRetries) {
+          await Future.delayed(_retryDelay * attempt);
+        }
+      }
+    }
+
+    return FirebaseFailure(lastError!);
+  }
+
+  static FirebaseError _mapFirebaseException(
+    FirebaseException e,
+    StackTrace stack,
+  ) {
+    return switch (e.plugin) {
+      'core' => FirebaseConfigError(
+          message: e.message ?? 'Configuration error',
+          code: e.code,
+          stackTrace: stack,
+        ),
+      'auth' => FirebaseAuthError(
+          message: e.message ?? 'Authentication error',
+          code: e.code,
+          stackTrace: stack,
+        ),
+      _ => FirebaseUnknownError(
+          message: e.message ?? 'Unknown Firebase error',
+          code: e.code,
+          stackTrace: stack,
+        ),
+    };
+  }
+}
+
+// Usage in main.dart
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final result = await FirebaseInitializer.initialize(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  switch (result) {
+    case FirebaseSuccess(:final data):
+      debugPrint('Firebase initialized: ${data.name}');
+      runApp(const MyApp());
+    case FirebaseFailure(:final error):
+      debugPrint('Firebase failed: ${error.message}');
+      runApp(FirebaseErrorApp(error: error));
+  }
 }
 ```
 
@@ -455,12 +608,267 @@ solution: |
   3. Check provider configuration matches platform
 ```
 
+## Testing Firebase Integration
+
+### Unit Test Setup
+
+```dart
+// test/firebase_test_setup.dart
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void setupFirebaseCoreMocks() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Setup mock Firebase Core
+  setupFirebaseCoreMocks();
+}
+
+// Mock Firebase initialization for tests
+class MockFirebasePlatform extends FirebasePlatform {
+  @override
+  FirebaseAppPlatform app([String name = defaultFirebaseAppName]) {
+    return MockFirebaseAppPlatform();
+  }
+
+  @override
+  Future<FirebaseAppPlatform> initializeApp({
+    String? name,
+    FirebaseOptions? options,
+  }) async {
+    return MockFirebaseAppPlatform();
+  }
+}
+
+class MockFirebaseAppPlatform extends FirebaseAppPlatform {
+  MockFirebaseAppPlatform() : super(defaultFirebaseAppName, FirebaseOptions(
+    apiKey: 'test-api-key',
+    appId: 'test-app-id',
+    messagingSenderId: 'test-sender-id',
+    projectId: 'test-project-id',
+  ));
+
+  @override
+  bool get isAutomaticDataCollectionEnabled => true;
+
+  @override
+  Future<void> delete() async {}
+
+  @override
+  Future<void> setAutomaticDataCollectionEnabled(bool enabled) async {}
+
+  @override
+  Future<void> setAutomaticResourceManagementEnabled(bool enabled) async {}
+}
+```
+
+### Repository Testing
+
+```dart
+// test/repositories/user_repository_test.dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
+void main() {
+  late FakeFirebaseFirestore fakeFirestore;
+  late MockFirebaseAuth mockAuth;
+  late UserRepository repository;
+
+  setUp(() {
+    fakeFirestore = FakeFirebaseFirestore();
+    mockAuth = MockFirebaseAuth();
+    repository = UserRepository(
+      firestore: fakeFirestore,
+      auth: mockAuth,
+    );
+  });
+
+  group('UserRepository', () {
+    test('creates user profile', () async {
+      // Arrange
+      const userId = 'test-user-id';
+      const userData = {'name': 'Test User', 'email': 'test@example.com'};
+
+      // Act
+      await repository.createProfile(userId, userData);
+
+      // Assert
+      final doc = await fakeFirestore
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      expect(doc.exists, isTrue);
+      expect(doc.data(), containsPair('name', 'Test User'));
+    });
+  });
+}
+```
+
+### Integration Testing
+
+```dart
+// integration_test/firebase_integration_test.dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    // Initialize Firebase for integration tests
+    await Firebase.initializeApp();
+
+    // Connect to emulators for integration tests
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  });
+
+  testWidgets('user signup flow', (tester) async {
+    await tester.pumpWidget(const MyApp());
+
+    // Test signup flow with emulators
+    await tester.tap(find.byKey(const Key('signup-button')));
+    await tester.pumpAndSettle();
+
+    // Verify user created
+    expect(FirebaseAuth.instance.currentUser, isNotNull);
+  });
+}
+```
+
 ## Best Practices
 
-1. **Always use FlutterFire CLI** for configuration consistency
-2. **Implement multi-environment** from the start
-3. **Enable App Check** for production security
-4. **Use emulators** for local development
-5. **Initialize Firebase before** any other Firebase service
-6. **Handle initialization errors** gracefully
-7. **Configure Crashlytics** to catch Flutter errors
+### 1. Always use FlutterFire CLI
+
+```bash
+# Ensures consistent configuration across all platforms
+flutterfire configure --project=your-project-id
+
+# Reconfigure after adding new platforms
+flutterfire configure
+```
+
+### 2. Implement multi-environment from the start
+
+```dart
+// Separate Firebase projects per environment
+// dev: my-app-dev → firebase_options_dev.dart
+// staging: my-app-staging → firebase_options_staging.dart
+// prod: my-app-prod → firebase_options.dart
+```
+
+### 3. Enable App Check for production
+
+```dart
+// Protect your backend resources from abuse
+await FirebaseAppCheck.instance.activate(
+  androidProvider: AndroidProvider.playIntegrity,
+  appleProvider: AppleProvider.appAttest,
+);
+```
+
+### 4. Use emulators for local development
+
+```bash
+# Start all emulators
+firebase emulators:start
+
+# Connect Flutter app to emulators
+await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+```
+
+### 5. Initialize Firebase before any other service
+
+```dart
+// WRONG: Service accessed before initialization
+final user = FirebaseAuth.instance.currentUser; // Error!
+await Firebase.initializeApp();
+
+// CORRECT: Initialize first
+await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+final user = FirebaseAuth.instance.currentUser; // OK
+```
+
+### 6. Handle initialization errors gracefully
+
+```dart
+// Show fallback UI when Firebase fails
+switch (result) {
+  case FirebaseFailure(:final error):
+    runApp(FirebaseErrorApp(error: error.message));
+  case FirebaseSuccess():
+    runApp(const MyApp());
+}
+```
+
+### 7. Configure Crashlytics to catch Flutter errors
+
+```dart
+FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+PlatformDispatcher.instance.onError = (error, stack) {
+  FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+  return true;
+};
+```
+
+### Common Anti-patterns to Avoid
+
+```dart
+// ❌ Don't hardcode Firebase options
+await Firebase.initializeApp(
+  options: FirebaseOptions(apiKey: 'hardcoded-key'), // Bad!
+);
+
+// ✅ Use generated options
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
+
+// ❌ Don't ignore initialization errors
+try {
+  await Firebase.initializeApp();
+} catch (_) {} // Silent failure - Bad!
+
+// ✅ Handle errors properly
+try {
+  await Firebase.initializeApp();
+} on FirebaseException catch (e) {
+  // Log, report, show user feedback
+}
+
+// ❌ Don't initialize multiple times
+await Firebase.initializeApp(); // First call
+await Firebase.initializeApp(); // Error!
+
+// ✅ Check if already initialized
+if (Firebase.apps.isEmpty) {
+  await Firebase.initializeApp();
+}
+```
+
+## Questions to Ask
+
+When setting up Firebase, consider these questions:
+
+1. **Environment count**: How many environments do you need (dev/staging/prod)?
+2. **Services**: Which Firebase services will your app use?
+3. **Authentication**: What auth providers do you need (email, Google, Apple, phone)?
+4. **Security**: Is App Check required for production?
+5. **Analytics**: Do you need detailed analytics and event tracking?
+6. **Offline**: Does the app need offline capability (Firestore persistence)?
+7. **Testing**: Will you use Firebase emulators for local development?
+8. **CI/CD**: How will Firebase be configured in your CI/CD pipeline?
+
+## Related Agents
+
+- **flutter-firebase-auth**: For Firebase Authentication implementation
+- **flutter-firebase-firestore**: For Cloud Firestore database operations
+- **flutter-firebase-services**: For Storage, Cloud Functions, and other Firebase services
+- **flutter-architect**: For integrating Firebase into your project architecture

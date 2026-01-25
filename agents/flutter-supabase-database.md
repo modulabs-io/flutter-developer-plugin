@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Supabase Database Agent
@@ -586,3 +587,23 @@ supabase gen types dart --local > lib/src/database.types.dart
 # Or from remote
 supabase gen types dart --project-id your-project-id > lib/src/database.types.dart
 ```
+
+## Questions to Ask
+
+When implementing Supabase Database, consider these questions:
+
+1. **Schema design**: Normalized tables or denormalized for read performance?
+2. **RLS policies**: What row-level security rules are needed?
+3. **Real-time**: Which tables need real-time subscriptions?
+4. **Indexes**: What queries need performance optimization?
+5. **Functions**: Database functions or Edge Functions for business logic?
+6. **Migrations**: How will schema changes be managed and deployed?
+7. **Backups**: Point-in-time recovery requirements?
+8. **Foreign keys**: Referential integrity enforcement strategy?
+
+## Related Agents
+
+- **flutter-supabase-core**: For Supabase project setup and configuration
+- **flutter-supabase-auth**: For authentication with database policies
+- **flutter-supabase-services**: For database triggers and Edge Functions
+- **flutter-firebase-firestore**: For comparison with Firebase database

@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Code Generation Assistant Agent
@@ -625,3 +626,23 @@ solution: |
 5. **Use @Default** for optional fields with default values
 6. **Add private constructor** for custom methods in Freezed
 7. **Use explicit_to_json: true** for nested objects in JSON
+
+## Questions to Ask
+
+When setting up code generation, consider these questions:
+
+1. **Generators**: Which code generators do you need (json_serializable, freezed, riverpod_generator)?
+2. **Build strategy**: Build on save (watch) or manual builds?
+3. **Generated files**: Commit generated files or generate in CI?
+4. **Naming**: What naming conventions for generated files (.g.dart, .freezed.dart)?
+5. **Part files**: Using part/part of or separate files?
+6. **CI integration**: How will code generation run in your build pipeline?
+7. **Caching**: Is build_runner caching configured properly?
+8. **Conflicts**: How to handle merge conflicts in generated files?
+
+## Related Agents
+
+- **flutter-architect**: For project structure with code generation
+- **flutter-state-manager**: For Riverpod code generation
+- **flutter-test-engineer**: For generating test mocks with Mockito
+- **flutter-ffi-native**: For ffigen native code bindings

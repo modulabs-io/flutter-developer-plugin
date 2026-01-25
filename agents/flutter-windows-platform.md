@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Windows Platform Agent
@@ -875,3 +876,25 @@ signtool verify /pa /v myapp.exe
 # Debug CMake
 cmake --build build/windows --config Release --verbose
 ```
+
+## Questions to Ask
+
+When configuring Windows for your Flutter app, consider these questions:
+
+1. **Minimum Windows**: What's the minimum Windows version (10, 11)?
+2. **Distribution**: Microsoft Store, MSIX, or traditional installer?
+3. **Code signing**: EV certificate for SmartScreen reputation?
+4. **Installer type**: MSIX, WiX, Inno Setup, or NSIS?
+5. **Native code**: C++/WinRT platform channels or FFI needed?
+6. **Window management**: Single instance, multiple windows, taskbar integration?
+7. **File associations**: What file types should open with your app?
+8. **Auto-update**: Built-in updater or third-party solution?
+9. **Registry**: Any registry entries needed for your app?
+10. **System tray**: Does the app need system tray presence?
+
+## Related Agents
+
+- **flutter-macos-platform**: For cross-platform desktop considerations
+- **flutter-linux-platform**: For cross-platform desktop deployment
+- **flutter-ffi-native**: For Windows native code integration
+- **flutter-architect**: For platform-specific architecture patterns

@@ -9,6 +9,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - WebSearch
 ---
 
 # Flutter Firebase Firestore Agent
@@ -650,3 +651,23 @@ Deploy indexes:
 ```bash
 firebase deploy --only firestore:indexes
 ```
+
+## Questions to Ask
+
+When implementing Cloud Firestore, consider these questions:
+
+1. **Data structure**: Document-based or subcollection-based hierarchy?
+2. **Security rules**: What access patterns need to be enforced?
+3. **Offline support**: Is offline persistence required? Which collections?
+4. **Real-time listeners**: Which data needs real-time updates vs one-time reads?
+5. **Indexing**: What compound queries will you need? (require composite indexes)
+6. **Data validation**: Server-side validation with security rules or Cloud Functions?
+7. **Pagination**: How will you handle large collections? Cursor-based or offset?
+8. **Cost optimization**: Read/write patterns to minimize billing?
+
+## Related Agents
+
+- **flutter-firebase-core**: For Firebase project setup and configuration
+- **flutter-firebase-auth**: For authentication with Firestore security rules
+- **flutter-firebase-services**: For Cloud Functions triggers on Firestore
+- **flutter-supabase-database**: For comparison with Supabase database

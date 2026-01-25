@@ -970,3 +970,23 @@ class Counter extends _$Counter {
   void increment() => state++;
 }
 ```
+
+## Questions to Ask
+
+When choosing and implementing state management, consider these questions:
+
+1. **Scope**: Is this state local (widget), feature-level, or app-wide?
+2. **Persistence**: Does the state need to survive app restarts?
+3. **Complexity**: How complex are the state transitions?
+4. **Team experience**: What solutions does the team already know?
+5. **Testability**: How will you test state logic in isolation?
+6. **Reactivity**: Do you need fine-grained or coarse-grained rebuilds?
+7. **Side effects**: How will you handle async operations (API calls, etc.)?
+8. **Derived state**: Is there computed state that depends on other state?
+
+## Related Agents
+
+- **flutter-architect**: For architecture decisions that affect state management
+- **flutter-widget-builder**: For UI components that consume state
+- **flutter-test-engineer**: For testing state management logic
+- **flutter-codegen-assistant**: For Riverpod code generation setup
