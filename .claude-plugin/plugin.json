@@ -1,6 +1,6 @@
 {
   "name": "flutter-developer",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Comprehensive Flutter development plugin for Claude Code - supports desktop (Windows, macOS, Linux) and mobile (iOS, Android) development with Firebase, Supabase, and all major state management solutions",
   "author": {
     "name": "Flutter Developer Plugin Contributors"
