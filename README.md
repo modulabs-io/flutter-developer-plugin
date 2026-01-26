@@ -203,6 +203,34 @@ export APP_STORE_CONNECT_ISSUER_ID="your-issuer-id"
 export APP_STORE_CONNECT_PRIVATE_KEY="your-private-key-content"
 ```
 
+## LSP Server Integrations
+
+The plugin configures 7 LSP (Language Server Protocol) servers for real-time code intelligence:
+
+| Server | Command | Languages | Purpose |
+|--------|---------|-----------|---------|
+| `dart` | `dart language-server` | `.dart` | Dart/Flutter analysis, diagnostics, navigation |
+| `swift` | `sourcekit-lsp` | `.swift` | Swift code intelligence for iOS |
+| `kotlin` | `kotlin-lsp` | `.kt`, `.kts` | Kotlin support for Android |
+| `java` | `jdtls` | `.java` | Java support for Android |
+| `clangd` | `clangd` | `.c`, `.h`, `.cpp`, `.hpp`, `.cc`, `.m`, `.mm` | C/C++/Objective-C for FFI |
+| `rust` | `rust-analyzer` | `.rs` | Rust support for flutter_rust_bridge |
+| `yaml` | `yaml-language-server` | `.yaml`, `.yml` | YAML for pubspec.yaml, configs |
+
+### LSP Server Installation
+
+LSP servers must be installed separately. Here are the installation methods:
+
+| Server | Install Command | Notes |
+|--------|-----------------|-------|
+| Dart | Included with Flutter/Dart SDK | No action needed |
+| Swift | Included with Xcode 11.4+ | Run `xcrun sourcekit-lsp` to verify |
+| Kotlin | `brew install JetBrains/utils/kotlin-lsp` | Requires Java 17+ |
+| Java | `brew install jdtls` | Requires Java 21+ runtime |
+| Rust | `rustup component add rust-analyzer` | Or `brew install rust-analyzer` |
+| clangd | `brew install llvm` | Or download from [clangd releases](https://github.com/clangd/clangd/releases) |
+| YAML | `npm install -g yaml-language-server` | For pubspec.yaml, analysis_options.yaml |
+
 ## Hooks
 
 The plugin includes automated hooks for:

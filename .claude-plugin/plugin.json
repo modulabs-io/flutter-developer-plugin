@@ -58,8 +58,10 @@
       ]
     },
     "hooks": true,
-    "mcp": true
+    "mcp": true,
+    "lsp": true
   },
   "hooks": "./hooks/hooks.json",
-  "mcpServers": "./.mcp.json"
+  "mcpServers": "./.mcp.json",
+  "lspServers": "./.lsp.json"
 }

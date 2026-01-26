@@ -61,6 +61,7 @@ flutter-developer-plugin/
 ├── hooks/
 │   └── hooks.json            # Automated hooks configuration
 ├── .mcp.json                 # MCP server configurations
+├── .lsp.json                 # LSP server configurations
 ├── CLAUDE.md                 # This file
 ├── README.md                 # Project documentation
 ├── CONTRIBUTING.md           # Contribution guidelines
@@ -366,6 +367,69 @@ The `.mcp.json` file configures 13 Model Context Protocol servers:
 | `chrome-devtools` | `chrome-devtools-mcp` | Chrome DevTools |
 
 Required environment variables: `GITHUB_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`, `DATABASE_URL`, `ANDROID_HOME`, `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_PRIVATE_KEY`
+
+### LSP Server Configuration
+
+The `.lsp.json` file configures 7 Language Server Protocol servers for real-time code intelligence:
+
+| Server | Command | File Extensions | Purpose |
+|--------|---------|-----------------|---------|
+| `dart` | `dart language-server` | `.dart` | Primary Dart/Flutter analysis |
+| `swift` | `sourcekit-lsp` | `.swift` | iOS platform code |
+| `kotlin` | `kotlin-lsp` | `.kt`, `.kts` | Android platform (Kotlin) |
+| `java` | `jdtls` | `.java` | Android platform (Java) |
+| `clangd` | `clangd` | `.c`, `.h`, `.cpp`, `.hpp`, `.cc`, `.m`, `.mm` | FFI native code (C/C++/Obj-C) |
+| `rust` | `rust-analyzer` | `.rs` | FFI via flutter_rust_bridge |
+| `yaml` | `yaml-language-server` | `.yaml`, `.yml` | Config files (pubspec, etc.) |
+
+**Installation Prerequisites:**
+
+```bash
+# Dart - included with Flutter SDK (no action needed)
+
+# Swift - included with Xcode 11.4+
+xcrun sourcekit-lsp --version
+
+# Kotlin
+brew install JetBrains/utils/kotlin-lsp
+
+# Java (requires Java 21+ runtime)
+brew install jdtls
+
+# Rust
+rustup component add rust-analyzer
+
+# C/C++ (clangd)
+brew install llvm
+
+# YAML
+npm install -g yaml-language-server
+```
+
+**Troubleshooting LSP Servers:**
+
+```bash
+# Verify Dart LSP
+dart language-server --version
+
+# Verify Swift LSP (macOS)
+xcrun sourcekit-lsp --help
+
+# Verify Kotlin LSP
+kotlin-lsp --version
+
+# Verify Java LSP
+jdtls --version
+
+# Verify rust-analyzer
+rust-analyzer --version
+
+# Verify clangd
+clangd --version
+
+# Verify YAML LSP
+yaml-language-server --version
+```
 
 ## Architecture Patterns
 
