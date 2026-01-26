@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.4.0...v1.5.0) (2026-01-26)
+
+
+### Features
+
+* **plugin:** Add LSP server configurations for code intelligence ([052fd5d](https://github.com/modulabs-io/flutter-developer-plugin/commit/052fd5de5efbd72986d6e624c7e0fc686e8c5cdc))
+
 ## [1.4.0](https://github.com/modulabs-io/flutter-developer-plugin/compare/v1.3.1...v1.4.0) (2026-01-25)
 
 
